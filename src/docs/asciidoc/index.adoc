@@ -1,12 +1,12 @@
 // todo: replace the title, author, email, subject, keywords and cover.png
-:title: My InfoQ Mini-Book
-:author: InfoQ Author
-:email:  feedback@infoq.com
+:title: Apache Isis Mini-Book
+:author: Dan Haywood
+:email:  dan@haywood-associates.co.uk
 :revnumber: 1.0
-:revdate: {docdate}
-:revyear: 2016
-:subject: JHipster
-:keywords: AngularJS, Bootstrap, Spring Boot
+:revdate:   {docdate}
+:revyear: 2017
+:subject: Apache Isis
+:keywords: Apache Isis, Domain-driven Design, Hexagonal Architecture
 :doctype: book
 :media: screen
 ifeval::["{media}" != "prepress"]
