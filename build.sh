@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-KINDLEGEN=/opt/tools/kindlegen/kindlegen ./gradlew clean all --stacktrace
+KINDLEGEN=/c/bin/kindlegen_win32_v2_9/kindlegen ./gradlew clean all --stacktrace

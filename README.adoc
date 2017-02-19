@@ -3,6 +3,8 @@
 This is an awesome book. It's written in AsciiDoc and compiles to HTML, PDF, EPUB, and MOBI using the
 http://asciidoctor.org/docs/asciidoctor-gradle-plugin/[Asciidoctor Gradle plugin].
 
+
+
 == Building
 
 To convert this book to HTML, EPUB, and MOBI, run the following command:

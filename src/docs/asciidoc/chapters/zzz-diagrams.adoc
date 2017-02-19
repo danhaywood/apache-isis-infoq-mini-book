@@ -1,0 +1,38 @@
+[[diagrams]]
+= Diagrams
+
+[plantuml,class-diagram,png]
+--
+hide methods  
+hide stereotypes  
+
+class employees.Instructor {
+    name: String
+}
+
+class customers.Customer {
+    name: String
+}
+
+class classes.GymClassDescription {
+    name: String
+    dayOfWeek: DayOfWeek
+    time: LocalTime
+}
+
+class classes.GymClass {
+    dateTime: LocalDateTime
+}
+
+class attendance.GymClassParticipant {
+    bookedOn: LocalDateTime
+    attended: boolean
+}
+
+classes.GymClassDescription <-- "0..*" classes.GymClass
+classes.GymClass <-- "0..*" attendance.GymClassParticipant
+employees.Instructor <-- classes.GymClassDescription
+employees.Instructor <-- classes.GymClass
+customers.Customer <-- attendance.GymClassParticipant
+--
+
