@@ -23,14 +23,15 @@ Matt Raible's original README (below) is for running on the Mac, and is only par
 
 As things stand, the following work (using either `bash` or `cmd` prompt):
 
-* `gradle clean html`
-* `gradle clean epub`
+* `./gradlew clean html`
+* `./gradlew clean epub`
+* `./gradlew clean html epub`
 
 However, the following don't work:
 
-* generating MOBI using `gradle mobi`
+* generating MOBI using `./gradlew mobi`
 ** error: can't find `kindlegen`
-* generating the PDF using the `generate_pdf.sh` script
+* generating the PDF using the `./generate_pdf.sh` script
 ** error: cannot find `rvm`
 
 
