@@ -1,0 +1,11 @@
+[[rest-and-custom-uis]]
+= REST and Custom UIs
+
+
+== Swagger
+
+
+== DTOs, content negotiation
+
+
+== Perhaps a custom mobile UI using ionic

@@ -1,0 +1,6 @@
+[[maintainability]]
+= Maintainability
+
+* Mixins
+* event bus  (refactor code to demonstrate)
+

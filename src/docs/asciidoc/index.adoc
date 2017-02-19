@@ -6,7 +6,7 @@
 :revdate:   {docdate}
 :revyear: 2017
 :subject: Apache Isis
-:keywords: Apache Isis, Domain-driven Design, Hexagonal Architecture
+:keywords: Apache Isis, Domain-driven Design, Hexagonal Architecture, REST
 :doctype: book
 :media: screen
 ifeval::["{media}" != "prepress"]
@@ -24,28 +24,42 @@ ifndef::ebook-format[:leveloffset: 1]
 = {title}
 
 [colophon#colophon%nonfacing]
-include::chapters/colophon.adoc[]
+include::pre/colophon.adoc[]
 
 [dedication]
-include::chapters/dedication.adoc[]
+include::pre/dedication.adoc[]
 
 [%nonfacing]
-include::chapters/acknowledgements.adoc[]
+include::pre/acknowledgements.adoc[]
 
 [preface]
-include::chapters/preface.adoc[]
+include::pre/preface.adoc[]
 
-include::chapters/introduction.adoc[]
+include::pre/introduction.adoc[]
 
-include::chapters/chapter1.adoc[]
+include::chapters/ch01-getting-started.adoc[]
 
-include::chapters/chapter2.adoc[]
+include::chapters/ch02-basics.adoc[]
 
-include::chapters/chapter3.adoc[]
+include::chapters/ch03-feedback-loops.adoc[]
 
-include::chapters/action.adoc[]
+include::chapters/ch04-business-logic.adoc[]
 
-include::chapters/about.adoc[]
+include::chapters/ch05-customisations.adoc[]
+
+include::chapters/ch06-maintainability.adoc[]
+
+include::chapters/ch07-technical-addons.adoc[]
+
+include::chapters/ch08-business-addons.adoc[]
+
+include::chapters/ch09-rest-and-custom-uis.adoc[]
+
+include::chapters/ch10-deploying.adoc[]
+
+include::post/action.adoc[]
+
+include::post/about.adoc[]
 
 //ifdef::backend-pdf,backend-docbook[]
 //[index]

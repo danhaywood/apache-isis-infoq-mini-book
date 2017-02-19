@@ -1,0 +1,12 @@
+[[business-logic]]
+= Business Logic
+
+
+
+== Validation, disable + hiding
+
+
+== Testing 
+
+* unit testing
+* integration testing

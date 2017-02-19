@@ -1,0 +1,15 @@
+[[technical-addons]]
+= Technical add-ons
+
+
+== Flywaydb
+
+
+== Security
+
+* and multi-tenancy – customer can only see their own classes have booked
+
+
+
+== Auditing, commands and publishing
+

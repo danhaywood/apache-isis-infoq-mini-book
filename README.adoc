@@ -1,11 +1,45 @@
-= An InfoQ Mini-Book
+= Apache Isis Mini-Book
+:toc:
 
-This is an awesome book. It's written in AsciiDoc and compiles to HTML, PDF, EPUB, and MOBI using the
+This book is a work-in-progress.
+
+
+It's written in AsciiDoc and compiles to HTML, PDF, EPUB, and MOBI using the
 http://asciidoctor.org/docs/asciidoctor-gradle-plugin/[Asciidoctor Gradle plugin].
+
+
+== Prereqs
+
+Have installed:
+
+* `kindlegen` (download from Amazon), added to $PATH
+* JDK8
 
 
 
 == Building
+
+Matt Raible's original README (below) is for running on the Mac, and is only partially documented, so need to revisit eventually so works ok also on Windows.
+
+As things stand, the following work (using either `bash` or `cmd` prompt):
+
+* `gradle clean html`
+* `gradle clean epub`
+
+However, the following don't work:
+
+* generating MOBI using `gradle mobi`
+** error: can't find `kindlegen`
+* generating the PDF using the `generate_pdf.sh` script
+** error: cannot find `rvm`
+
+
+
+
+== Matt Raible's original README
+
+
+=== Building
 
 To convert this book to HTML, EPUB, and MOBI, run the following command:
 
@@ -31,7 +65,7 @@ $ generate-pdf.sh screen
 * Open _build/asciidoc/epub3/index.epub_ in iBooks to see the generated EPUB file.
 * Open _build/asciidoc/epub3/index.mobi_ in http://calibre-ebook.com/[Calibre] to see the generated MOBI file.
 
-== Sweet Authoring Experience
+=== Sweet Authoring Experience
 
 If you'd like a very pleasant authoring experience, the project provides build files that make it possible. First of all,
 you'll need to run `gradlew` once. After running it once, you can run `./gradlew watch` to watch for any changes and

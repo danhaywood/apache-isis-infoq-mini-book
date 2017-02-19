@@ -1,0 +1,5 @@
+[[basics]]
+= Basics
+
+* Entities, repositories, menus 
+* Removing boilerplate (Lombok, paraname8 ext.)

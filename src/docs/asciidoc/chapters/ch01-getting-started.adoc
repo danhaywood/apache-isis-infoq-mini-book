@@ -1,0 +1,24 @@
+[[getting-started]]
+= Getting started
+:imagesdir: images
+
+
+
+
+[[_getting-started_prereqs]]
+== Prereqs
+
+* JDK8
+* mvn
+* running the mvn archetype
+* importing into the IDE
+
+
+[[_getting-started_introducing-the-case-study]]
+== Introducing the Case Study
+
+
+image::class-diagram.png[]
+
+
+
