@@ -1,24 +1,202 @@
 [[getting-started]]
 = Getting started
-:imagesdir: images
+:imagesdir: ../images
 
+Apache Isis (TM) is a full-stack framework for building enterprise applications.
+It's also great for building the REST services for internet-scale apps, be they microservices or the backend of a mobile app.
 
+In this mini-book we'll learn about the framework through an example application that demonstrates both these main use cases (as an enterprise app and as a mobile backend).
+Along the way we'll take a few diversions to describe some of the background and philosophy of why the framework is as it is: as you'll see, it's quite opinionated!
 
-
-[[_getting-started_prereqs]]
-== Prereqs
-
-* JDK8
-* mvn
-* running the mvn archetype
-* importing into the IDE
+But for now, let's get on with the show.
 
 
 [[_getting-started_introducing-the-case-study]]
 == Introducing the Case Study
 
+In an effort to get a bit fitter I recently joined a gym, and I really enjoy attending their various classes (spinning and barbells, yeah!).
+One can book a class up to seven days in advance, and there's limited number of places for each class so they'll put you on the waiting list if it is already fun.
+But to book a class you need to phone up the gym; there's no website nor mobile app.
+So this is what gave me the idea for the case study we're going to use in this mini-book.
 
-image::class-diagram.png[]
+xref:_getting-started_introducing-the-case-study_diagram[] shows a UML class diagram for the main entities that make up our domain.
+
+
+[#_getting-started_introducing-the-case-study_diagram,reftext='{figure-caption} {counter:refnum}.']
+.Case study
+image::ch01/class-diagram.png[width="388px", height="580px",link="images/ch01/class-diagram.png"]
 
 
 
+We have five main entities, which I've arranged into four different modules:
+
+* the `employees` module holds the `Instructor` entity; this represents the individual who takes the class
+
+* the `classes` module defines both the `GymClassDescription` entity and the `GymClass` entity.
+An example of the first might be "Pilates @ 5pm each Wednesday, usually run by Tamsin".
+An example of the second might be "Pilates on 1st March 2017, run instead by Bobbi"
+
+* the `customers` module defines the `Customer` entity; these are the punters who pay the gym cash
+
+* finally the `attendance` module defines the `GymClassParticipant`.
+That's a `GymMember` attending one of the ``GymClass``es.
+
+I've used link:https://en.wikipedia.org/wiki/Object_Modeling_in_Color[Coad Colors] to indicate the nature of the various classes; I learnt this technique a long time ago and I still find it useful occasionally.
+
+.Exploring the domain together
+****
+One of Apache Isis' strengths is in being able to tackle complex business domains, where neither the techies in the team nor even the busines experts start off with a complete understanding of the domain.
+Building an Apache Isis application is then a journey for the entire team, as insights and deeper concepts are uncovered along the way.
+
+So it's actually not that realistic to start off building an app, as we are doing here, with a full domain class diagram already mapped out .
+Trying to simulate that journey of discovery would just make this mini-book too long, though.
+****
+
+
+[[_getting-started_introducing-the-case-study_case-study-repo]]
+=== The Case Study Repo
+
+To prevent this mini-book just being listing after listing, I'm not going to exhaustively spell out all the source code that makes up the application.
+Instead, I'll highlight the new concepts as they arise, and then I'll use tags in the link:https://github.com/danhaywood/gymclass[`danhaywood/gymclass`] repo (up on github) that houses the source code.
+
+This means that you can (A) check out the code at any point, and (b) you can use github's link:https://github.com/danhaywood/gymclass/compare[github's /compare view] to inspect the differences between any two tagss.
+
+Still, if you want to follow along, you will need to install some software.
+Next section looks at the prerequisites.
+
+[[_getting-started_prereqs]]
+== Prereqs
+
+Apache Isis is a Java framework, and we build with Maven.
+You'll therefore need to install:
+
+* link:http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html[JDK 8]. +
++
+Actually, Apache Isis 1.x also supports Java 7, but some of the addons/customisations we'll be using require Java 8.
+
+* link:https://maven.apache.org/download.cgi[Maven 3.3.x] or higher
+
+You'll also need an IDE.
+I was an link:https://www.eclipse.org/[Eclipse (TM)] user for over a decade, and still have fond memories of that IDE, but I switched to link:https://www.jetbrains.com/idea/download[IntelliJ (TM)] (community edition) a few years ago.
+
+You'll find setup instructions for both these IDEs on the link:http://isis.apache.org/guides/dg.html#_dg_ide[Apache Isis website].
+If you're an Apache NetBeans (TM) user then I'm sure you'll have no problems also; the main requirement is good Maven support.
+
+
+[[_getting-started_using-the-maven-archetype-to-generate-the-app]]
+== Using the maven archetype to generate the app
+
+Apache Isis provides the link:http://isis.apache.org/guides/ugfun.html#_ugfun_getting-started_simpleapp-archetype["SimpleApp" Maven archetype] to get you started.
+So that's what I'll use.
+
+In a suitable directory:
+
+[source,bash]
+----
+mvn archetype:generate  \
+    -D archetypeGroupId=org.apache.isis.archetype \
+    -D archetypeArtifactId=simpleapp-archetype \
+    -D archetypeVersion=1.14.0 \
+    -D groupId=com.danhaywood.apps \
+    -D artifactId=gymclass \
+    -D version=1.0-SNAPSHOT \
+    -B
+
+cd gymclass
+----
+
+which I then push to my link:https://github.com/danhaywood/gymclass[`danhaywood/gymclass`] repo that I created on github:
+
+[source,bash]
+----
+git init
+git add .
+git commit -m "adds files generated by simpleapp archetype 1.14.0 ..."
+git remote add origin https://github.com/danhaywood/gymclass.git
+git push -u origin master
+----
+
+
+And I'll tag that immediately:
+
+[source,bash]
+----
+git tag 0.0.1 && git push origin 0.0.1
+----
+
+
+[[_getting-started_running-the-app]]
+== Running the app
+
+Even though we've not made any changes, you might want to try out the app at this point.
+To pull down the code at this point, use:
+
+[source,bash]
+----
+git checkout 0.0.1
+mvn clean install
+----
+
+You can then run using:
+
+[source,bash]
+----
+mvn -pl webapp jetty:run
+----
+
+You can also load this module into your IDE.
+Again, you'll find instructions on the Apache Isis website on how to do this, for link:http://isis.apache.org/guides/dg.html#_dg_ide_intellij_importing-maven-modules[IntelliJ], and for link:http://isis.apache.org/guides/dg.html#_dg_ide_eclipse_importing-the-project[Eclipse]
+
+
+[TIP]
+====
+If you go to the github website you'll also be able to inspect the repo at this point by choosing the appropriate tag, as shown in xref:_getting-started_running-the-app_github-tag[].
+
+[#_getting-started_running-the-app_github-tag,reftext='{figure-caption} {counter:refnum}.']
+.Select tag from the github website
+image::ch01/github-tag.png[]
+
+If you look at the "README" at this point you'll see that the maven archetype lists a whole bunch of ways to build the app and then run it.
+From the command line using `jetty:run` is probably most convenient, but you'll also see that you can even build and run the app as a Docker image!
+====
+
+Navigate to link:http://localhost:8080[localhost:8080] to open up the index page, as shown in
+xref:_getting-started_running-the-app_index-page[].
+
+[#_getting-started_running-the-app_index-page,reftext='{figure-caption} {counter:refnum}.']
+.Index page for the app generated by simpleapp archetype
+image::ch01/simpleapp-index.png[link="images/ch01/simpleapp-index.png"]
+
+The index page for the app shows two links: "wicket/" and "swagger-ui/".
+Clicking on the "wicket/" link will take you to to a login page, where you can use `sven`/`pass` as a default user and password.
+
+From there you are at the home page and you can create, find and update ``SimpleObject``s, as shown in xref:_getting-started_running-the-app_object[].
+
+[#_getting-started_running-the-app_object,reftext='{figure-caption} {counter:refnum}.']
+.A "Simple object"
+image::ch01/simpleapp-object.png[link="images/ch01/simpleapp-object.png"]
+
+
+.Fixtures
+****
+By default the application is configured to run against an in-memory database (HSQLDB).
+That means that each time you run up the application, you'll have to start anew.
+
+Obviously, that would get pretty tiresome pretty quickly, so to save yourself some time you can run up a fixture, as shown in xref:_getting-started_running-the-app_fixtures[].
+
+[#_getting-started_running-the-app_fixtures,reftext='{figure-caption} {counter:refnum}.']
+.Run fixtures to set up the app into a known state
+image::ch01/simpleapp-run-fixtures.png[link="images/ch01/simpleapp-run-fixtures.png"]
+
+Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' support for writing integration tests.
+****
+
+
+== Refactor 
+
+The archetype gives us a single module called "simple", with a single domain class called "SimpleObject".
+That class in turn has a single property called "name".
+
+As it happens, the structure of that module is quite similar to the `Instructor` entity in the `employees` module, so I'm going to do some renaming:
+
+*

@@ -4,35 +4,36 @@
 [plantuml,class-diagram,png]
 --
 hide methods  
-hide stereotypes  
+hide stereotypes
 
-class employees.Instructor {
+class employees.Instructor #lightgreen { 
     name: String
 }
 
-class customers.Customer {
+class customers.GymMember #lightgreen {
     name: String
 }
 
-class classes.GymClassDescription {
+class classes.GymClassDescription #lightblue {
     name: String
     dayOfWeek: DayOfWeek
     time: LocalTime
 }
 
-class classes.GymClass {
+class classes.GymClass #lightpink {
     dateTime: LocalDateTime
 }
 
-class attendance.GymClassParticipant {
+class attendance.GymClassParticipant #lightpink {
     bookedOn: LocalDateTime
     attended: boolean
 }
+
 
 classes.GymClassDescription <-- "0..*" classes.GymClass
 classes.GymClass <-- "0..*" attendance.GymClassParticipant
 employees.Instructor <-- classes.GymClassDescription
 employees.Instructor <-- classes.GymClass
-customers.Customer <-- attendance.GymClassParticipant
+customers.GymMember <-- attendance.GymClassParticipant
 --
 

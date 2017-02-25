@@ -10,7 +10,7 @@ InfoQ mini-books are designed to be concise, intending to serve technical archit
 
 == Who this book is for
 
-*[red]#TODO: #*
+*[red]#TODO#*
 
 == What you need for this book
 
