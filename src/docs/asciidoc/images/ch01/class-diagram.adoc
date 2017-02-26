@@ -1,39 +1,78 @@
 [[diagrams]]
 = Diagrams
 
+== class-diagram.png
+
 [plantuml,class-diagram,png]
 --
 hide methods  
 hide stereotypes
 
-class employees.Instructor #lightgreen { 
+skinparam ranksep 60
+
+class persons.Person #lightgreen {
+    name: String
+}
+abstract class persons.PersonRole #lightyellow {
     name: String
 }
 
-class customers.GymMember #lightgreen {
+class customers.GymMember #lightyellow {
+}
+
+class employees.GymInstructor #lightyellow {
+}
+
+class timetable.GymClassDescription #lightblue {
     name: String
 }
 
-class classes.GymClassDescription #lightblue {
-    name: String
+class timetable.GymClass #lightgreen {
     dayOfWeek: DayOfWeek
     time: LocalTime
 }
 
-class classes.GymClass #lightpink {
+class classes.ScheduledGymClass #lightpink {
     dateTime: LocalDateTime
 }
 
-class attendance.GymClassParticipant #lightpink {
+class classes.Participant #lightpink {
     bookedOn: LocalDateTime
     attended: boolean
 }
 
-
-classes.GymClassDescription <-- "0..*" classes.GymClass
-classes.GymClass <-- "0..*" attendance.GymClassParticipant
-employees.Instructor <-- classes.GymClassDescription
-employees.Instructor <-- classes.GymClass
-customers.GymMember <-- attendance.GymClassParticipant
+persons.Person --> "0..*" persons.PersonRole
+persons.PersonRole ^-- employees.GymInstructor
+persons.PersonRole ^-- customers.GymMember
+timetable.GymClassDescription <-- "0..*" timetable.GymClass
+timetable.GymClass <-- "0..*\n" classes.ScheduledGymClass
+classes.ScheduledGymClass <-- "0..*" classes.Participant
+customers.GymMember <-- classes.Participant
+employees.GymInstructor "\nregular" <-- "0..*" timetable.GymClass
+employees.GymInstructor "\n0..1\nsubstitute" <-- classes.ScheduledGymClass
 --
 
+== coad-colors.png
+
+[plantuml,coad-colors,png]
+--
+hide methods  
+hide stereotypes
+left to right direction
+
+class Description #lightblue {
+}
+
+class Role #lightyellow {
+}
+
+class Person_Place_Thing #lightgreen {
+}
+
+class Moment_Interval #lightpink {
+}
+
+Moment_Interval --> Person_Place_Thing
+Person_Place_Thing --> Role
+Role --> Description
+--

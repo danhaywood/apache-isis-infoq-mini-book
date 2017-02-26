@@ -27,29 +27,42 @@ xref:_getting-started_introducing-the-case-study_diagram[] shows a UML class dia
 image::ch01/class-diagram.png[width="388px", height="580px",link="images/ch01/class-diagram.png"]
 
 
+We have 7 entities, in five different modules:
 
-We have five main entities, which I've arranged into four different modules:
+* The `person` module holds the `Person` entity (for example "Billy" or "Tamsin") along with the abstract `PersonRole` entity
 
-* the `employees` module holds the `Instructor` entity; this represents the individual who takes the class
+* The `customers` module defines the `GymMember` entity; so a `Person` with this role - "Billy", say - is a gym member.
 
-* the `classes` module defines both the `GymClassDescription` entity and the `GymClass` entity.
-An example of the first might be "Pilates @ 5pm each Wednesday, usually run by Tamsin".
-An example of the second might be "Pilates on 1st March 2017, run instead by Bobbi"
+* Similarly the `employees` module defines the `GymInstructor` entity so a `Person` with this role - "Tamsin", say - leads gym classes.
 
-* the `customers` module defines the `Customer` entity; these are the punters who pay the gym cash
+* In the `timetable` module the `GymClassDescription` entity describes the types of classes available, such as "Pilates" or "Spinning".
+The `GymClass` lists which classes normally occur, such as "Pilates @ 5pm each Wednesday, led by Tamsin".
 
-* finally the `attendance` module defines the `GymClassParticipant`.
-That's a `GymMember` attending one of the ``GymClass``es.
+* finally the `classes` module defines the `ScheduledGymClass` entity and also `Participant`.
+The former is an actual occurrance of a timetabled gym class, for example "Pilates on 1st March 2017, run by Bobbi".
+The latter is the `GymMember` who's actually going to participate in one of the ``GymClass``es.
 
 I've used link:https://en.wikipedia.org/wiki/Object_Modeling_in_Color[Coad Colors] to indicate the nature of the various classes; I learnt this technique a long time ago and I still find it useful occasionally.
+xref:_getting-started_introducing-the-case-study_coad-colors[] shows the general direction of dependencies; following this simple rule helped me identify some missing concepts (for example `GymClassDescription` vs `GymClass`.
+
+[#_getting-started_introducing-the-case-study_coad-colors,reftext='{figure-caption} {counter:refnum}.']
+.Coad Colors
+image::ch01/coad-colors.png[width="388px", height="580px",link="images/ch01/coad-colors.png"]
+
+
+In the diagram you'll see that there's one "loop": there are two routes from `ScheduledGymClass` to `GymInstructor`, either directly or by way of `GymClass`.
+Such loops are always worth looking at more closely to make sure that they make sense.
+In this case they do: sometimes the regular instructor who normally leads the class isn't available and so another substitutes in for a particular scheduled gym class.
+
+
 
 .Exploring the domain together
 ****
 One of Apache Isis' strengths is in being able to tackle complex business domains, where neither the techies in the team nor even the busines experts start off with a complete understanding of the domain.
 Building an Apache Isis application is then a journey for the entire team, as insights and deeper concepts are uncovered along the way.
 
-So it's actually not that realistic to start off building an app, as we are doing here, with a full domain class diagram already mapped out .
-Trying to simulate that journey of discovery would just make this mini-book too long, though.
+I put together the above domain model by myself in an hour or so, and it's probably in good enough shape to begin the conversation with the domain experts.
+However, I'm certain that if we were building a gym class booking system "for real" then it would change substantially as the app was developed.  [***TODO - double-check that the model hasn't changed once I've finished the book!!!***]
 ****
 
 
@@ -177,18 +190,20 @@ From there you are at the home page and you can create, find and update ``Simple
 image::ch01/simpleapp-object.png[link="images/ch01/simpleapp-object.png"]
 
 
-.Fixtures
+.Fixture Scripts
 ****
 By default the application is configured to run against an in-memory database (HSQLDB).
 That means that each time you run up the application, you'll have to start anew.
 
-Obviously, that would get pretty tiresome pretty quickly, so to save yourself some time you can run up a fixture, as shown in xref:_getting-started_running-the-app_fixtures[].
+Obviously, that would get pretty tiresome pretty quickly, so to save yourself some time you can run up a fixture, using `Prototyping > Run Fixture Script`.
+This will bring up an action prompt allowing you to select the fixture to run, as shown in xref:_getting-started_running-the-app_fixtures[].
 
 [#_getting-started_running-the-app_fixtures,reftext='{figure-caption} {counter:refnum}.']
 .Run fixtures to set up the app into a known state
-image::ch01/simpleapp-run-fixtures.png[link="images/ch01/simpleapp-run-fixtures.png"]
+image::ch01/simpleapp-run-fixture-prompt.png[link="images/ch01/simpleapp-run-fixture-prompt.png"]
 
-Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' support for writing integration tests.
+Having a fixture script is a great way to define the context for exploring a particular user story/scenario.
+Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' support for writing the integration tests for those user stories.
 ****
 
 
@@ -197,6 +212,6 @@ Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' 
 The archetype gives us a single module called "simple", with a single domain class called "SimpleObject".
 That class in turn has a single property called "name".
 
-As it happens, the structure of that module is quite similar to the `Instructor` entity in the `employees` module, so I'm going to do some renaming:
+As it happens, the structure of that entityis quite similar to the `Person` entity in the `persons` module, so I'm going to do some renaming:
 
 *
