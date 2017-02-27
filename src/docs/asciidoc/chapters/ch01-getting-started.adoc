@@ -50,11 +50,12 @@ xref:_getting-started_introducing-the-case-study_coad-colors[] shows the general
 image::ch01/coad-colors.png[width="388px", height="580px",link="images/ch01/coad-colors.png"]
 
 
-In the diagram you'll see that there's one "loop": there are two routes from `ScheduledGymClass` to `GymInstructor`, either directly or by way of `GymClass`.
+In the diagram you'll see that there's one "loop" between classes: there are two routes from `ScheduledGymClass` to `GymInstructor`, either directly or by way of `GymClass`.
 Such loops are always worth looking at more closely to make sure that they make sense.
 In this case they do: sometimes the regular instructor who normally leads the class isn't available and so another substitutes in for a particular scheduled gym class.
 
-
+As for the modules themselves, there are _no_ loops between the modules.
+This is very important: it means that we can implement each module as a Maven module, and then rely upon Maven itself to ensure that the application doesn't become a link:https://en.wikipedia.org/wiki/Big_ball_of_mud[big ball of mud].
 
 .Exploring the domain together
 ****
@@ -97,7 +98,7 @@ If you're an Apache NetBeans (TM) user then I'm sure you'll have no problems als
 
 
 [[_getting-started_using-the-maven-archetype-to-generate-the-app]]
-== Using the maven archetype to generate the app
+== Using the maven archetype to generate the app (`0.0.1`)
 
 Apache Isis provides the link:http://isis.apache.org/guides/ugfun.html#_ugfun_getting-started_simpleapp-archetype["SimpleApp" Maven archetype] to get you started.
 So that's what I'll use.
@@ -134,7 +135,8 @@ And I'll tag that immediately:
 
 [source,bash]
 ----
-git tag 0.0.1 && git push origin 0.0.1
+git tag 0.0.1-as-generated-by-simpleapp-archetype
+git push origin 0.0.1-as-generated-by-simpleapp-archetype
 ----
 
 
@@ -146,7 +148,7 @@ To pull down the code at this point, use:
 
 [source,bash]
 ----
-git checkout 0.0.1
+git checkout 0.0.1-as-generated-by-simpleapp-archetype
 mvn clean install
 ----
 
@@ -207,11 +209,62 @@ Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' 
 ****
 
 
-== Refactor 
+== Refactor (`0.0.2`)
 
 The archetype gives us a single module called "simple", with a single domain class called "SimpleObject".
 That class in turn has a single property called "name".
 
-As it happens, the structure of that entityis quite similar to the `Person` entity in the `persons` module, so I'm going to do some renaming:
+As it happens, the structure of that entity is quite similar to the `Person` entity in the `persons` module, so I decided to just do a little refactoring:
 
-*
+* renamed `module-simple` directory to `module-persons`
+* renamed `<artifactId>gymclass-module-classes</artifactId>` to `<artifactId>gymclass-module-persons</artifactId>` and adjusted module references
+* using the IDE, renamed `domainapp.modules.timetable` to package `domainapp.modules.persons`
+* fixed up the fully-qualified class name in the JDOQL query fpr `SimpleObject` (the IDE incorrectly changed this string, but running the tests flagged the issue)
+* renamed some classes called `SimpleModuleXxx` to `PersonModuleXxx` (we'll learn about modules later on [***TODO - fix ref***]
+
+Without thinking too hard about it, I then renamed the `SimpleObject` entity, along with associated tests/fixtures created by the archetype:
+
+* renamed `SimpleObject`, `SimpleObjectTest`, `SimpleObjectData`, `SimpleObjectMenu`, `SimpleObjectMenuGlue`, `SimpleObjectRepository` to corresponding `Person...` classes
+* fixed the JDOQL for `Person`; there's also a delete statement in `PersonModuleTearDown` (one of our fixture scripts) that needs attention
+* changed the DB schema for `Person` from "simple" to "persons"
+* updated `persistence.xml` (used by the ORM that Apache Isis' uses, link://www.datanucleus.org[DataNucleus]) to specify "gymclass-persons" as the name of this persistence unit
+
+Also some cosmetics:
+
+* each domain class rendered by the framework optionally has a `.layout.xml` file which provides layout hints to describe the positioning of the properties, collections and actions that make up each domain object.
+So I renamed `SimpleObject.layout.xml` to `Person.layout.xml` file
+
+* also, each domain class can have an icon.
+I deleted `SimpleObject.png` and replaced it with a suitable icon downloaded from link:http://icons8.com[icons8] website
+* renamed `PersonMenu`'s name to "Persons" (from "Simple Objects").
+
+And finally there were some application-level changes:
+
+* I searched for "SimpleApp" and "Simple App", and renamed to "GymClass"
+* I fixed some BDD (cucumber) feature files and bindings +
++
+A little bit of care is needed here because if these fail, then they don't break the build, instead the cucumber report (`application/target/cucumber-reports/overview-features.html`) shows up as incomplete.
+We'll look at BDD in a later chapter [***TODO***].
+
+You can check this version of the app out using:
+
+[source,bash]
+----
+git checkout 0.0.2-simple-module-refactored-to-person-module
+----
+
+
+
+== Placeholders for the other modules
+
+
+== [TODO]  Realistic Fixture Data (`0.0.x`)
+
+When I ran up the app at this stage, I see that the fixture script sets up nonsense names ("Foo", "Bar" etc) for what are now my `Person` objects.
+
+
+[source,bash]
+----
+git checkout 0.0.3-person-fixture-data
+----
+
