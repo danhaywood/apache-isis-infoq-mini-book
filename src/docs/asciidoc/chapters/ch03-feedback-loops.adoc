@@ -4,9 +4,21 @@
 == Fixtures
 
 
+=== Realistic Fixture Data
+
+
+When I ran up the app at this stage, I see that the fixture script sets up nonsense names ("Foo", "Bar" etc) for what are now my `Person` and other placeholder entities.
+
+
 
 == Layouts
 
 Need to engage end users, add a little polish.
 
 
+
+
+
+== What we've learnt
+
+[***TODO***]

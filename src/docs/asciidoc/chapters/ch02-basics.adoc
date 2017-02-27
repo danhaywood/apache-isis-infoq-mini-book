@@ -3,3 +3,10 @@
 
 * Entities, repositories, menus 
 * Removing boilerplate (Lombok, paraname8 ext.)
+
+
+
+
+== What we've learnt
+
+[***TODO***]

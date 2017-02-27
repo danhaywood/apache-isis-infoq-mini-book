@@ -4,3 +4,10 @@
 * Mixins
 * event bus  (refactor code to demonstrate)
 
+
+
+
+
+== What we've learnt
+
+[***TODO***]

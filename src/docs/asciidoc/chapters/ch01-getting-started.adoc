@@ -2,7 +2,7 @@
 = Getting started
 :imagesdir: ../images
 
-Apache Isis (TM) is a full-stack framework for building enterprise applications.
+Apache Isis(TM) is a full-stack framework for building enterprise applications.
 It's also great for building the REST services for internet-scale apps, be they microservices or the backend of a mobile app.
 
 In this mini-book we'll learn about the framework through an example application that demonstrates both these main use cases (as an enterprise app and as a mobile backend).
@@ -24,7 +24,7 @@ xref:_getting-started_introducing-the-case-study_diagram[] shows a UML class dia
 
 [#_getting-started_introducing-the-case-study_diagram,reftext='{figure-caption} {counter:refnum}.']
 .Case study
-image::ch01/class-diagram.png[width="388px", height="580px",link="images/ch01/class-diagram.png"]
+image::ch01/class-diagram.png[width="500px",link="images/ch01/class-diagram.png"]
 
 
 We have 7 entities, in five different modules:
@@ -42,12 +42,12 @@ The `GymClass` lists which classes normally occur, such as "Pilates @ 5pm each W
 The former is an actual occurrance of a timetabled gym class, for example "Pilates on 1st March 2017, run by Bobbi".
 The latter is the `GymMember` who's actually going to participate in one of the ``GymClass``es.
 
-I've used link:https://en.wikipedia.org/wiki/Object_Modeling_in_Color[Coad Colors] to indicate the nature of the various classes; I learnt this technique a long time ago and I still find it useful occasionally.
+I've used link:https://en.wikipedia.org/wiki/Object_Modeling_in_Color[Coad Colors^] to indicate the nature of the various classes; I learnt this technique a long time ago and I still find it useful occasionally.
 xref:_getting-started_introducing-the-case-study_coad-colors[] shows the general direction of dependencies; following this simple rule helped me identify some missing concepts (for example `GymClassDescription` vs `GymClass`.
 
 [#_getting-started_introducing-the-case-study_coad-colors,reftext='{figure-caption} {counter:refnum}.']
 .Coad Colors
-image::ch01/coad-colors.png[width="388px", height="580px",link="images/ch01/coad-colors.png"]
+image::ch01/coad-colors.png[width="800px", link="images/ch01/coad-colors.png"]
 
 
 In the diagram you'll see that there's one "loop" between classes: there are two routes from `ScheduledGymClass` to `GymInstructor`, either directly or by way of `GymClass`.
@@ -55,7 +55,7 @@ Such loops are always worth looking at more closely to make sure that they make 
 In this case they do: sometimes the regular instructor who normally leads the class isn't available and so another substitutes in for a particular scheduled gym class.
 
 As for the modules themselves, there are _no_ loops between the modules.
-This is very important: it means that we can implement each module as a Maven module, and then rely upon Maven itself to ensure that the application doesn't become a link:https://en.wikipedia.org/wiki/Big_ball_of_mud[big ball of mud].
+This is very important: it means that we can implement each module as a Maven module, and then rely upon Maven itself to ensure that the application doesn't become a link:https://en.wikipedia.org/wiki/Big_ball_of_mud[big ball of mud^].
 
 .Exploring the domain together
 ****
@@ -71,9 +71,9 @@ However, I'm certain that if we were building a gym class booking system "for re
 === The Case Study Repo
 
 To prevent this mini-book just being listing after listing, I'm not going to exhaustively spell out all the source code that makes up the application.
-Instead, I'll highlight the new concepts as they arise, and then I'll use tags in the link:https://github.com/danhaywood/gymclass[`danhaywood/gymclass`] repo (up on github) that houses the source code.
+Instead, I'll highlight the new concepts as they arise, and then I'll use tags in the link:https://github.com/danhaywood/gymclass[`danhaywood/gymclass`^] repo (up on github) that houses the source code.
 
-This means that you can (A) check out the code at any point, and (b) you can use github's link:https://github.com/danhaywood/gymclass/compare[github's /compare view] to inspect the differences between any two tagss.
+This means that you can (A) check out the code at any point, and (b) you can use github's link:https://github.com/danhaywood/gymclass/compare[/compare^] view to inspect the differences between any two tagss.
 
 Still, if you want to follow along, you will need to install some software.
 Next section looks at the prerequisites.
@@ -84,23 +84,23 @@ Next section looks at the prerequisites.
 Apache Isis is a Java framework, and we build with Maven.
 You'll therefore need to install:
 
-* link:http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html[JDK 8]. +
+* link:http://www.oracle.com/technetwork/java/javase/downloads/index-jsp-138363.html[JDK 8^]. +
 +
 Actually, Apache Isis 1.x also supports Java 7, but some of the addons/customisations we'll be using require Java 8.
 
-* link:https://maven.apache.org/download.cgi[Maven 3.3.x] or higher
+* link:https://maven.apache.org/download.cgi[Maven 3.3.x^] or higher
 
 You'll also need an IDE.
-I was an link:https://www.eclipse.org/[Eclipse (TM)] user for over a decade, and still have fond memories of that IDE, but I switched to link:https://www.jetbrains.com/idea/download[IntelliJ (TM)] (community edition) a few years ago.
+I was an link:https://www.eclipse.org/[Eclipse^](TM) user for over a decade, and still have fond memories of that IDE, but I switched to link:https://www.jetbrains.com/idea/download[IntelliJ^](TM) (community edition) a few years ago.
 
-You'll find setup instructions for both these IDEs on the link:http://isis.apache.org/guides/dg.html#_dg_ide[Apache Isis website].
-If you're an Apache NetBeans (TM) user then I'm sure you'll have no problems also; the main requirement is good Maven support.
+You'll find setup instructions for both these IDEs on the link:http://isis.apache.org/guides/dg.html#_dg_ide[Apache Isis website^].
+If you're an link://http://netbeans.apache.org[Apache NetBeans^](TM) user then I'm sure you'll have no problems also; the main requirement is good Maven support.
 
 
 [[_getting-started_using-the-maven-archetype-to-generate-the-app]]
-== Using the maven archetype to generate the app (`0.0.1`)
+== Using the maven archetype to generate the app (`1.1`)
 
-Apache Isis provides the link:http://isis.apache.org/guides/ugfun.html#_ugfun_getting-started_simpleapp-archetype["SimpleApp" Maven archetype] to get you started.
+Apache Isis provides the link:http://isis.apache.org/guides/ugfun.html#_ugfun_getting-started_simpleapp-archetype["SimpleApp" Maven archetype^] to get you started.
 So that's what I'll use.
 
 In a suitable directory:
@@ -119,7 +119,7 @@ mvn archetype:generate  \
 cd gymclass
 ----
 
-which I then push to my link:https://github.com/danhaywood/gymclass[`danhaywood/gymclass`] repo that I created on github:
+which I then push to my link:https://github.com/danhaywood/gymclass[`danhaywood/gymclass`^] repo that I created on github:
 
 [source,bash]
 ----
@@ -135,8 +135,8 @@ And I'll tag that immediately:
 
 [source,bash]
 ----
-git tag 0.0.1-as-generated-by-simpleapp-archetype
-git push origin 0.0.1-as-generated-by-simpleapp-archetype
+git tag 1.1-as-generated-by-simpleapp-archetype
+git push origin 1.1-as-generated-by-simpleapp-archetype
 ----
 
 
@@ -148,19 +148,8 @@ To pull down the code at this point, use:
 
 [source,bash]
 ----
-git checkout 0.0.1-as-generated-by-simpleapp-archetype
-mvn clean install
+git checkout 1.1-as-generated-by-simpleapp-archetype
 ----
-
-You can then run using:
-
-[source,bash]
-----
-mvn -pl webapp jetty:run
-----
-
-You can also load this module into your IDE.
-Again, you'll find instructions on the Apache Isis website on how to do this, for link:http://isis.apache.org/guides/dg.html#_dg_ide_intellij_importing-maven-modules[IntelliJ], and for link:http://isis.apache.org/guides/dg.html#_dg_ide_eclipse_importing-the-project[Eclipse]
 
 
 [TIP]
@@ -175,7 +164,21 @@ If you look at the "README" at this point you'll see that the maven archetype li
 From the command line using `jetty:run` is probably most convenient, but you'll also see that you can even build and run the app as a Docker image!
 ====
 
-Navigate to link:http://localhost:8080[localhost:8080] to open up the index page, as shown in
+Build the application using:
+
+[source,bash]
+----
+mvn clean install
+----
+
+and then run using:
+
+[source,bash]
+----
+mvn -pl webapp jetty:run
+----
+
+Navigate to link:http://localhost:8080[localhost:8080^] to open up the index page, as shown in
 xref:_getting-started_running-the-app_index-page[].
 
 [#_getting-started_running-the-app_index-page,reftext='{figure-caption} {counter:refnum}.']
@@ -185,9 +188,9 @@ image::ch01/simpleapp-index.png[link="images/ch01/simpleapp-index.png"]
 The index page for the app shows two links: "wicket/" and "swagger-ui/".
 Clicking on the "wicket/" link will take you to to a login page, where you can use `sven`/`pass` as a default user and password.
 
-From there you are at the home page and you can create, find and update ``SimpleObject``s, as shown in xref:_getting-started_running-the-app_object[].
+From there you are at the home page and you can create, find and update ``SimpleObject``s, as shown in xref:_getting-started_running-the-app_simple-object[].
 
-[#_getting-started_running-the-app_object,reftext='{figure-caption} {counter:refnum}.']
+[#_getting-started_running-the-app_simple-object,reftext='{figure-caption} {counter:refnum}.']
 .A "Simple object"
 image::ch01/simpleapp-object.png[link="images/ch01/simpleapp-object.png"]
 
@@ -209,7 +212,132 @@ Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' 
 ****
 
 
-== Refactor (`0.0.2`)
+== Taking a look around
+
+Before we start refactoring the application towards our case study's domain, let's quickly review what the archetype generates for us.
+
+The application is a multi-module Maven build, consisting of four modules:
+
+* `module-simple` +
++
+contains the domain object model for an initial "simple" module.
+It's in modules such as this that the main logic of the application resides.
+Module-specific tests (unit tests and integration tests) also reside here.
+
+* `application` +
++
+contains (an implementation of) the `AppManifest`, which basically describes the modules and configuration that makes up the running system.
+It also contains application-wide services and views (such as a home page/dashboard), and application-wide integration tests
+
+* `webapp` +
++
+contains the `web.xml` file and related classes to package up the application as a web app.
+
+There is a top-level parent module for all of these modules.
+
+This is probably a good point to import the application into your IDE; see the Apache Isis link:http://isis.apache.org/guides/dg.html#_dg_ide[developers' guide^] for details.
+It also shows how to run the application from the IDE (rather that from the Maven command line).
+
+
+The `module-simple` module contains a single entity, `SimpleObject`.
+As you've probably realised, this doesn't represent anything in particular, it's just meant to be a minimal class that can be easily refactored into other classes that _are_ relevant to your domain.
+Indeed we'll see this shortly.
+
+Domain objects in Apache Isis have three different "types" of members:
+
+* properties - scalar values such as "name" or "date".
+They can also be a reference to another object.
+For example an `Order` might reference the `Customer` that placed it.
+
+* collections - multi-valued references to other objects.
+For example an `Order` might have a collection of ``OrderItem``s.
+
+* actions - business operations that can be performed by the domain object.
+Sometimes these are just queries, sometimes these modify state (either of the target domain object or indeed any other object).
+
+In the case of `SimpleObject` it defines two properties: `name` and `notes`:
+
+.SimpleObject properties
+----
+public class SimpleObject ... {
+    ...
+    @javax.jdo.annotations.Column(allowsNull = "false", length = 40)        // <1>
+    @Property()                                                             // <2>
+    @Getter @Setter                                                         // <3>
+    @Title(prepend = "Object: ")                                            // <4>
+    private String name;
+
+    @javax.jdo.annotations.Column(allowsNull = "true", length = 4000)       // <1>
+    @Property(editing = Editing.ENABLED)                                    // <2>
+    @Getter @Setter                                                         // <3>
+    private String notes;
+    ...
+}
+----
+<1> JDO annotation provides persistence metadata to the ORM (more on this below)
+<2> The `@Property` annotation defines the field as an Apache Isis property.
+In the case of `name` the property cannot be edited through the UI, whereas for `notes` that property _can_ be directly edited.
+If empty (as it is for `name`) then the annotation isn't actually required; but it is recommended in all cases anyway, for readability.
+<3> The archetype uses link:https://projectlombok.org/[Project Lombok^] to remove some boilerplate: the `@Getter` and `@Setter` annotations will automatically generate corresponding getter and setter methods.
+When building with Maven, Project Lombok hooks into the compiler and __Just Works(TM)__.
+If using an IDE, you may need to enable the appropriate settings (see the link:http://isis.apache.org/guides/dg.html#_dg_ide[developers' guide^]).
+<4> The `@Title` annotation is used to provide a human-readable label to identify the domain object.
+This doesn't need to be unique, just "unique enough".
+
+As xref:_getting-started_running-the-app_simple-object[] showed, the framework automatically renders these properties in the UI.
+
+The `SimpleObject` entity doesn't have any collections, but it does define a couple of actions:
+
+.SimpleObject properties
+----
+public class SimpleObject ... {
+    ...
+    @Action(semantics = SemanticsOf.IDEMPOTENT)                         // <1>
+    public SimpleObject updateName(
+            @Parameter(maxLength = 40)
+            @ParameterLayout(named = "Name")
+            final String name) {
+        setName(name);
+        return this;
+    }
+
+    @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)        // <2>
+    public void delete() {
+        final String title = titleService.titleOf(this);
+        messageService.informUser(String.format("'%s' deleted", title));
+        repositoryService.remove(this);
+    }
+    ...
+}
+----
+<1> The `@Action` annotation indicates that these public methods are treated as actions.
+
+Again in xref:_getting-started_running-the-app_simple-object[] you'll see that "changeName" and "delete" both appear as buttons in the UI.
+
+Actions are really, really important; ultimately they are what makes your application more than a simple CRUD app.
+
+...UP TO HERE...
+
+If you take a look at `SimpleObject` you'll see a bunch of JDO annotations; these are used to by the ORM (link:http://www.datanucleus.org[DataNucleus^]) to persist the entity into the database.
+JDO is admittedly less well known than JPA, but is just as capable (perhaps even more so).
+Indeed, DataNucleus implements both APIs (though at the time of writing Apache Isis only supports entities annotated with JDO).
+
+
+
+
+
+
+
+
+
+.What's missing?
+****
+[***TODO***] No controllers, no views...
+****
+
+
+
+== Refactor (`1.2`)
 
 The archetype gives us a single module called "simple", with a single domain class called "SimpleObject".
 That class in turn has a single property called "name".
@@ -227,7 +355,7 @@ Without thinking too hard about it, I then renamed the `SimpleObject` entity, al
 * renamed `SimpleObject`, `SimpleObjectTest`, `SimpleObjectData`, `SimpleObjectMenu`, `SimpleObjectMenuGlue`, `SimpleObjectRepository` to corresponding `Person...` classes
 * fixed the JDOQL for `Person`; there's also a delete statement in `PersonModuleTearDown` (one of our fixture scripts) that needs attention
 * changed the DB schema for `Person` from "simple" to "persons"
-* updated `persistence.xml` (used by the ORM that Apache Isis' uses, link://www.datanucleus.org[DataNucleus]) to specify "gymclass-persons" as the name of this persistence unit
+* updated `persistence.xml` (used by the ORM that Apache Isis' uses, link://www.datanucleus.org[DataNucleus^]) to specify "gymclass-persons" as the name of this persistence unit
 
 Also some cosmetics:
 
@@ -235,7 +363,7 @@ Also some cosmetics:
 So I renamed `SimpleObject.layout.xml` to `Person.layout.xml` file
 
 * also, each domain class can have an icon.
-I deleted `SimpleObject.png` and replaced it with a suitable icon downloaded from link:http://icons8.com[icons8] website
+I deleted `SimpleObject.png` and replaced it with a suitable icon downloaded from link:http://icons8.com[icons8^] website
 * renamed `PersonMenu`'s name to "Persons" (from "Simple Objects").
 
 And finally there were some application-level changes:
@@ -250,21 +378,55 @@ You can check this version of the app out using:
 
 [source,bash]
 ----
-git checkout 0.0.2-simple-module-refactored-to-person-module
+git checkout 1.2-simple-module-refactored-to-person-module
 ----
 
 
+[[_getting-started_placeholders]]
+== Placeholders for the other modules (`1.3` through `1.6`)
 
-== Placeholders for the other modules
+Since we're going to need them eventually, I decided to create Maven modules for the other 4 modules (`customers`, `employees`, `timetable` and `classes`).
+I just took a copy of the `simple` module that comes with the "simpleapp" archetype, and then renamed its `SimpleObject` entity in each case to one of the entities in each of those modules.
+
+It's a judgement call as to when you would introduce modules for real application development.
+For maximum flexibility initialy you probably should start off with all your code in a single module, and just use Java packages to keep a bit of structure.
+
+Once the responsibilities of your classes start to settle down, and before you get too much code to work with, you do need to start formalizing things and introducing Maven modules.
+These will ensure that you have no bidirectional dependencies between the code.
+
+I've chosen to introduce modules right up front because my "gym class" case study is pretty simple, and I'm fairly certain that I have the boundaries about right.
+But if it was a more complex domain, I would definitely defer this decision.
+
+As it is, there are a succession of git tags, each of which adds in a placeholder module:
+
+* `1.3-adds-timetable-module` +
++
+renames `SimpleObject` to `GymClassDescription` entity
+
+* `1.4-adds-customers-module` +
++
+renames `SimpleObject` to `GymMember` entity
+
+* `1.5-adds-employees-module` +
++
+renames `SimpleObject` to `GymInstructor` entity
+
+* `1.6-adds-classes-module` +
++
+renames `SimpleObject` to `ScheduledGymClass` entity
+
+We'll flesh out these modules/entities in the subsequent sections and chapters.
+For the meantime, xref:_getting-started_placeholders_home-page[] shows the app as it currently stands.
+
+[#_getting-started_placeholders_home-page,reftext='{figure-caption} {counter:refnum}.']
+.Index page for the app generated by simpleapp archetype
+image::ch01/gymclass-with-placeholder-modules.png[link="images/ch01/gymclass-with-placeholder-modules.png"]
 
 
-== [TODO]  Realistic Fixture Data (`0.0.x`)
-
-When I ran up the app at this stage, I see that the fixture script sets up nonsense names ("Foo", "Bar" etc) for what are now my `Person` objects.
 
 
-[source,bash]
-----
-git checkout 0.0.3-person-fixture-data
-----
+== What we've learnt
+
+[***TODO***]
+
 
