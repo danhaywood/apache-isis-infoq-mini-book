@@ -292,8 +292,8 @@ The `SimpleObject` entity doesn't have any collections, but it does define a cou
 ----
 public class SimpleObject ... {
     ...
-    @Action(semantics = SemanticsOf.IDEMPOTENT)                         // <1>
-    public SimpleObject updateName(
+    @Action(semantics = SemanticsOf.IDEMPOTENT)                             // <1>
+    public SimpleObject updateName(                                         // <2>
             @Parameter(maxLength = 40)
             @ParameterLayout(named = "Name")
             final String name) {
@@ -301,38 +301,97 @@ public class SimpleObject ... {
         return this;
     }
 
-    @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)        // <2>
-    public void delete() {
+    @Action(semantics = SemanticsOf.NON_IDEMPOTENT_ARE_YOU_SURE)            // <1>
+    public void delete() {                                                  // <2>
         final String title = titleService.titleOf(this);
-        messageService.informUser(String.format("'%s' deleted", title));
-        repositoryService.remove(this);
+        messageService.informUser(String.format("'%s' deleted", title));    // <3>
+        repositoryService.remove(this);                                     // <4>
     }
     ...
 }
 ----
 <1> The `@Action` annotation indicates that these public methods are treated as actions.
+<2> Must haev `public` visibility.
+The object returned (if any) indicates what the framework should render next (often the same object)
+<3> Calls injected `TitleService` domain service (provided by the framework) to display a message (shown as a "toast" popup)
+<4> Calls injected `RepositoryService` domain service (provided by the framework) to actually delete this domain object from the database.
 
 Again in xref:_getting-started_running-the-app_simple-object[] you'll see that "changeName" and "delete" both appear as buttons in the UI.
 
-Actions are really, really important; ultimately they are what makes your application more than a simple CRUD app.
+Actions are really, really important; ultimately they are what makes your application more than a simple link:https://en.wikipedia.org/wiki/Create,_read,_update_and_delete[CRUD^] app.
+It's quite common for actions to delegate to injected domain services, provided either by the framework (as is the case here) or by domain services defined by the application itself.
+We'll see an example of the latter in a moment.
 
-...UP TO HERE...
+If you take a look at `SimpleObject` class definition you'll see a bunch of link:https://db.apache.org/jdo/[JDO^] annotations; these are used by the ORM (link:http://www.datanucleus.org[DataNucleus^]) to map the domain object to the database.
+JDO is admittedly less well known than JPA, but is just as capable (perhaps even more so); it's supported NoSQL as well as regular RDBMS from the very beginning.
+In fact, DataNucleus implements both the JDO and link:https://en.wikipedia.org/wiki/Java_Persistence_API[JPA^] APIs (though at the time of writing Apache Isis only supports entities annotated with JDO).
+The `SimpleObject` class definition is also annotated with the framework's own `@DomainObject` annotation.
 
-If you take a look at `SimpleObject` you'll see a bunch of JDO annotations; these are used to by the ORM (link:http://www.datanucleus.org[DataNucleus^]) to persist the entity into the database.
-JDO is admittedly less well known than JPA, but is just as capable (perhaps even more so).
-Indeed, DataNucleus implements both APIs (though at the time of writing Apache Isis only supports entities annotated with JDO).
+A good way to think about domain objects in Apache Isis are as regular pojos with additional metadata.
+This metadata is often expressed in terms of annotations, which pertain either to the domain layer (eg `@Property(editing = ...)` and `@Action#semantics=...)`, or which relate to mapping the domain object to the persistence layer (the JDO annotations such as `@PersistenceCapable` or `@Column`.
+In addition, metadata can be provided which relates to the preeentation layer.
 
+This presentation metadata can also be provided using annotations; for example there are `@PropertyLayout`, `@CollectionLayout`, `@ActionLayout` and `@DomainObjectLayout` annotations that you can use.
+However it's more common and powerful to provide such metadata instead using an associated `.layout.xml` file; you can modify the file and recompile; the framework will then automatically re-render the domain object.
+(In fact, the archetype even provides some gradle files which can be used to do automatic reloading of the web browser for even faster feedback).
 
+Sitting alongside the `SimpleObject` class definition you'll therefore find the `SimpleObject.layout.xml` file.
+This uses `<property>`, `<collection>` and `<action>` elements to reference the corresponding members of the domain object, these are organized using `<row>`, `<col>`, `<tabGroup>`, `<tab>` and `<fieldset>`.
+The organization of columns and rows is modelled directly after link:http://getbootstrap.com/[Bootstrap3^], so should be easy to learn (there are always 12 ``<col>``s per `<row>`, for example).
 
+Earlier on I mentioned that every domain object has a title which is used as a label for the end-user to distinguish objects.
+Alongside the title the app also renders an icon, as further hint as to the type of object they is being displayed.
+The icon used also sits alongside the `SimpleObject`, namely `SimpleObject.png`.
+It can be quite good fun selecting an appropriate icon (I tend to use link:www.icons8.com[Icons8^].
 
+So much for the `SimpleObject` entity.
+The framework also generates a couple of domain services: `SimpleObjectRepository` and `SimpleObjectMenu`.
+These are (in this case) singletons that are instantiated automatically by the framework and injected everywhere they are required - into other domain services, into entities, whatever.
 
+The `SimpleObjectRepository` is an implementation of the link:https://martinfowler.com/eaaCatalog/repository.html[Repository^] pattern; it in turn delegates to the framework's own more generic `RepositoryService` that is a facade over the ORM's JDO API:
 
+[source,java]
+----
+@DomainService(                                                         // <1>
+         nature = NatureOfService.DOMAIN, ...                           // <2>
+)
+public class SimpleObjectRepository {
+    ...
+    public List<SimpleObject> listAll() { ... }
+    public List<SimpleObject> findByName(final String name) { ... }
+    public SimpleObject create(final String name) { ... }
+    ...
+}
+----
+<1> Used by the framework to discover the services (on the classpath), and provides additional semantics about the domain service.
+<2> Indicates that the service is _not_ to be rendered in the UI, it is intended to be called programmatically by domain objects only
 
+It's quite common to also have repository services double up as factories, hence the service also defines a "create" method here too
 
+The `SimpleObjectMenu` domain service is, at first glance, quite similar to the `SimpleObjectRepository`; it also defines the same three actions.
+However, the menu will be rendered in the UI, by virtue of the `@DomainService(nature=NatureOfService.VIEW_MENU_ONLY)` annotation.
+The supporting `@DomainServiceLayout` defines the label to use.
+
+Although the archetype defines `SimpleObjectMenu` and `SimpleObjectRepository` as being very similar, in a real-world app you may well want to organize your application menus completely differently to the way in which the repository services are defined.
+Having two services provides for this separation of concerns, letting them evolve independently of each other.
+
+Finally, the archetype provides a whole bunch of tests and fixtures.
+We'll end up refactoring some of this stuff and just deleting other stuff that we don't need.
+Let's not get distracted by those classes for now.
 
 .What's missing?
 ****
-[***TODO***] No controllers, no views...
+You may have noticed that there was no discussion of `SimpleObjectController` or `SimpleObject.html` views.
+That's because there aren't any!
+Apache Isis _is_ a model-view-controller framework, however as the developer you only write the model - the domain objects - while the view and controller are entirely generics, provided by the framework itself.
+
+Hopefully it is obvious that not having to write this UI layer has big benefits when it comes to productivity
+
+[***TODO***]  ... UP TO HERE ...
+
+Firewall
+
+Reenskaug, Pawson thesis, naked objects pattern.
 ****
 
 
