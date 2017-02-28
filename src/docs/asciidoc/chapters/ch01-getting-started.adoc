@@ -211,7 +211,7 @@ Having a fixture script is a great way to define the context for exploring a par
 Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' support for writing the integration tests for those user stories.
 ****
 
-
+[[_getting-started_taking-a-look-around]]
 == Taking a look around
 
 Before we start refactoring the application towards our case study's domain, let's quickly review what the archetype generates for us.
@@ -381,33 +381,33 @@ Let's not get distracted by those classes for now.
 
 .What's missing?
 ****
-You may have noticed that there was no discussion of `SimpleObjectController` or `SimpleObject.html` views.
+You may have noticed that there was no discussion of `SimpleObjectController` or `SimpleObject.jsp` views.
 That's because there aren't any!
 Apache Isis _is_ a model-view-controller framework, however as the developer you only write the model - the domain objects - while the view and controller are entirely generics, provided by the framework itself.
+To be fair, the `.layout.xml` is a view of sorts, but also it is optional: the framework will render the domain object even without this file.
 
-Hopefully it is obvious that not having to write this UI layer has big benefits when it comes to productivity
+Hopefully it is obvious that not having to write this UI layer has big benefits when it comes to productivity.
+It also forces the developer and domain expert to focus on the stuff that really matters: the underlying domain.
 
-[***TODO***]  ... UP TO HERE ...
+And here's another benefit: since the developer doesn't (ie can't) write the presentation layer code, it means that business logic doesn't leak into the presentation layer: the framework in a sense puts up a "firewall" between the presentation and domain layers, thereby ensuring a proper separation of concerns.
 
-Firewall
-
-Reenskaug, Pawson thesis, naked objects pattern.
+There's a name for this style of architecture: the link:https://en.wikipedia.org/wiki/Naked_objects[naked objects^] pattern.
+You can learn more about the philosophy and implications of the pattern in the link:http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf[PhD thesis] of Richard Pawson (who named and popularized the pattern).
+Fun fact: the external examiner for Richard's thesis was link:https://en.wikipedia.org/wiki/Trygve_Reenskaug[Trygve Reenskaug^], who formulated the link:https://heim.ifi.uio.no/~trygver/2003/javazone-jaoo/MVC_pattern.pdf[MVC^] pattern.
 ****
 
 
 
 == Refactor (`1.2`)
 
-The archetype gives us a single module called "simple", with a single domain class called "SimpleObject".
-That class in turn has a single property called "name".
-
-As it happens, the structure of that entity is quite similar to the `Person` entity in the `persons` module, so I decided to just do a little refactoring:
+As we surveyed xref:_getting-started_taking-a-look-around[above], the archetype gives us a single module called `simple`, with a single domain class called `SimpleObject`.
+As it happens, the structure of that entity is quite similar to the `Person` entity that we need in the `persons` module, so I decided to just do a little refactoring:
 
 * renamed `module-simple` directory to `module-persons`
 * renamed `<artifactId>gymclass-module-classes</artifactId>` to `<artifactId>gymclass-module-persons</artifactId>` and adjusted module references
 * using the IDE, renamed `domainapp.modules.timetable` to package `domainapp.modules.persons`
 * fixed up the fully-qualified class name in the JDOQL query fpr `SimpleObject` (the IDE incorrectly changed this string, but running the tests flagged the issue)
-* renamed some classes called `SimpleModuleXxx` to `PersonModuleXxx` (we'll learn about modules later on [***TODO - fix ref***]
+* renamed some classes called `SimpleModuleXxx` to `PersonModuleXxx` (we'll learn about modules later on [***TODO - fix ref***]).
 
 Without thinking too hard about it, I then renamed the `SimpleObject` entity, along with associated tests/fixtures created by the archetype:
 
