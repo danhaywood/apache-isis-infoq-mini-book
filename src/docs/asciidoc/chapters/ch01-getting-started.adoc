@@ -214,9 +214,17 @@ Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' 
 [[_getting-started_taking-a-look-around]]
 == Taking a look around
 
-Before we start refactoring the application towards our case study's domain, let's quickly review what the archetype generates for us.
+Before we start refactoring the application towards our case study's domain, let's quickly review the source code that the archetype generates for us.
 
-The application is a multi-module Maven build, consisting of four modules:
+[TIP]
+====
+This is probably a good point to import the application into your IDE; see the Apache Isis link:http://isis.apache.org/guides/dg.html#_dg_ide[developers' guide^] for details.
+It also shows how to run the application from the IDE (rather that from the Maven command line).
+====
+
+=== Maven Modules
+
+The application is a multi-module Maven build, consisting of several modules:
 
 * `module-simple` +
 +
@@ -235,9 +243,7 @@ contains the `web.xml` file and related classes to package up the application as
 
 There is a top-level parent module for all of these modules.
 
-This is probably a good point to import the application into your IDE; see the Apache Isis link:http://isis.apache.org/guides/dg.html#_dg_ide[developers' guide^] for details.
-It also shows how to run the application from the IDE (rather that from the Maven command line).
-
+=== The `SimpleObject` entity
 
 The `module-simple` module contains a single entity, `SimpleObject`.
 As you've probably realised, this doesn't represent anything in particular, it's just meant to be a minimal class that can be easily refactored into other classes that _are_ relevant to your domain.
@@ -288,7 +294,7 @@ As xref:_getting-started_running-the-app_simple-object[] showed, the framework a
 
 The `SimpleObject` entity doesn't have any collections, but it does define a couple of actions:
 
-.SimpleObject properties
+.SimpleObject actions
 ----
 public class SimpleObject ... {
     ...
@@ -327,9 +333,11 @@ JDO is admittedly less well known than JPA, but is just as capable (perhaps even
 In fact, DataNucleus implements both the JDO and link:https://en.wikipedia.org/wiki/Java_Persistence_API[JPA^] APIs (though at the time of writing Apache Isis only supports entities annotated with JDO).
 The `SimpleObject` class definition is also annotated with the framework's own `@DomainObject` annotation.
 
+=== Layout Metadata
+
 A good way to think about domain objects in Apache Isis are as regular pojos with additional metadata.
 This metadata is often expressed in terms of annotations, which pertain either to the domain layer (eg `@Property(editing = ...)` and `@Action#semantics=...)`, or which relate to mapping the domain object to the persistence layer (the JDO annotations such as `@PersistenceCapable` or `@Column`.
-In addition, metadata can be provided which relates to the preeentation layer.
+In addition, metadata can be provided which relates to the presentation layer.
 
 This presentation metadata can also be provided using annotations; for example there are `@PropertyLayout`, `@CollectionLayout`, `@ActionLayout` and `@DomainObjectLayout` annotations that you can use.
 However it's more common and powerful to provide such metadata instead using an associated `.layout.xml` file; you can modify the file and recompile; the framework will then automatically re-render the domain object.
@@ -343,6 +351,8 @@ Earlier on I mentioned that every domain object has a title which is used as a l
 Alongside the title the app also renders an icon, as further hint as to the type of object they is being displayed.
 The icon used also sits alongside the `SimpleObject`, namely `SimpleObject.png`.
 It can be quite good fun selecting an appropriate icon (I tend to use link:www.icons8.com[Icons8^].
+
+=== Domain services
 
 So much for the `SimpleObject` entity.
 The framework also generates a couple of domain services: `SimpleObjectRepository` and `SimpleObjectMenu`.
@@ -374,6 +384,8 @@ The supporting `@DomainServiceLayout` defines the label to use.
 
 Although the archetype defines `SimpleObjectMenu` and `SimpleObjectRepository` as being very similar, in a real-world app you may well want to organize your application menus completely differently to the way in which the repository services are defined.
 Having two services provides for this separation of concerns, letting them evolve independently of each other.
+
+=== Tests and fixtures
 
 Finally, the archetype provides a whole bunch of tests and fixtures.
 We'll end up refactoring some of this stuff and just deleting other stuff that we don't need.
@@ -407,7 +419,7 @@ As it happens, the structure of that entity is quite similar to the `Person` ent
 * renamed `<artifactId>gymclass-module-classes</artifactId>` to `<artifactId>gymclass-module-persons</artifactId>` and adjusted module references
 * using the IDE, renamed `domainapp.modules.timetable` to package `domainapp.modules.persons`
 * fixed up the fully-qualified class name in the JDOQL query fpr `SimpleObject` (the IDE incorrectly changed this string, but running the tests flagged the issue)
-* renamed some classes called `SimpleModuleXxx` to `PersonModuleXxx` (we'll learn about modules later on [***TODO - fix ref***]).
+* renamed some classes called `SimpleModuleXxx` to `PersonModuleXxx` (we'll learn about how Apache Isis defines modules later on [***TODO - fix ref***]).
 
 Without thinking too hard about it, I then renamed the `SimpleObject` entity, along with associated tests/fixtures created by the archetype:
 
@@ -486,6 +498,9 @@ image::ch01/gymclass-with-placeholder-modules.png[link="images/ch01/gymclass-wit
 
 == What we've learnt
 
-[***TODO***]
+In this chapter we've seen how to use Apache Isis' maven archetype to bootstrap the development of a new application, and what the classes and files that are generated.
+We learnt how to load that app into an IDE, and how to run the app either from the IDE or from the Maven command line.
 
+We've also introduced our case study, and did some some refactoring of our initial code to move it into that general direction.
 
+In the next chapter we'll [***TODO - update once written***].
