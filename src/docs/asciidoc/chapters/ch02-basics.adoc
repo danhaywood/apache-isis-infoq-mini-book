@@ -1,8 +1,81 @@
 [[basics]]
 = Basics
+:toc:
+
+In the previous chapter we introduced the case study and did some initial work on the structure of our app.
+In this chapter we'll ...
+
+[***TODO - update once written ...***]
 
 * Entities, repositories, menus 
-* Removing boilerplate (Lombok, paraname8 ext.)
+* fixtures
+** realistic data, migration-driven development
+* nouns and verbs
+
+
+== ``Person``'s name (tag `2.1`)
+
+Let's start out by making `Person` a little bit more realistic.
+Currently the entity only defines a "name" property, let's change that.
+
+I did the following:
+
+* renamed `name` property to `firstName`
+* added in a new `lastName` property
+* updated the supporting domain services (`PersonMenu` and `PersonRepository`) to be able to create and find ``Person``s with both a first- and last name
+* changed the `updateName()` action to update both first and last names, and removed some dummy validation that came from the the simpleapp archetype
+* updated unit and integration tests
+* removed the BDD spec tests completely
+
+Let's take a look at the updated `updateName()` action:
+
+[source,java]
+----
+@Action(semantics = SemanticsOf.IDEMPOTENT)
+public Person updateName(
+        @Parameter(maxLength = 40)
+        @ParameterLayout(named = "First name")  // <1>
+        final String firstName,
+        @Parameter(maxLength = 40)
+        @ParameterLayout(named = "Last name")   // <1>
+        final String lastName) {
+    setFirstName(firstName);
+    setLastName(lastName);
+    return this;
+}
+public String default0UpdateName() {            // <2>
+    return getFirstName();
+}
+public String default1UpdateName() {            // <2>
+    return getLastName();
+}
+----
+<1> Provides a UI hint for the 0^th^ and 1^st^ parameters respectively
+<2> Provides a default value for the 0^th^ and 1^st^ parameters respectively
+
+The `@ParameterLayout` UI hint is required because, at least by default, the parameter name isn't available via Java reflection to the framework.
+(We'll revisit this shortly [***TODO - update to xref section below ***]
+
+
+
+
+*** run with a cut-down app manifest
+
+
+*** look at the layout
+
+
+TODO: paraname8
+
+
+
+
+[source,bash]
+----
+mvn -pl module-persons,application,webapp clean install -o
+----
+
+
 
 
 
