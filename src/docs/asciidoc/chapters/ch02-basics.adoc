@@ -1,6 +1,7 @@
 [[basics]]
 = Basics
 :toc:
+:imagesdir: ../images
 
 In the previous chapter we introduced the case study and did some initial work on the structure of our app.
 In this chapter we'll ...
@@ -12,8 +13,9 @@ In this chapter we'll ...
 ** realistic data, migration-driven development
 * nouns and verbs
 
+[[_basics_persons-name]]
+== ``Person``'s name [link:https://github.com/danhaywood/gymclass/tree/2.1-Person-first-name-and-last-name[2.1^]]
 
-== ``Person``'s name (tag `2.1`)
 
 Let's start out by making `Person` a little bit more realistic.
 Currently the entity only defines a "name" property, let's change that.
@@ -22,6 +24,8 @@ I did the following:
 
 * renamed `name` property to `firstName`
 * added in a new `lastName` property
+* tweaked the `.layout.xml` for the new lastName property
+* updated fixture data (in `PersonData`) to provide realistic names for people
 * updated the supporting domain services (`PersonMenu` and `PersonRepository`) to be able to create and find ``Person``s with both a first- and last name
 * changed the `updateName()` action to update both first and last names, and removed some dummy validation that came from the the simpleapp archetype
 * updated unit and integration tests
@@ -53,8 +57,20 @@ public String default1UpdateName() {            // <2>
 <1> Provides a UI hint for the 0^th^ and 1^st^ parameters respectively
 <2> Provides a default value for the 0^th^ and 1^st^ parameters respectively
 
-The `@ParameterLayout` UI hint is required because, at least by default, the parameter name isn't available via Java reflection to the framework.
-(We'll revisit this shortly [***TODO - update to xref section below ***]
+
+
+xref:_basics_persons-name_person-object[] shows this updated version of `Person`.
+
+[#_basics_persons-name_person-object,reftext='{figure-caption} {counter:refnum}.']
+.Updated `Person` with first and last names.
+image::ch02/Person-object.png[link="images/ch02/Person-object.png"]
+
+
+And as xref:_basics_persons-name_person-updateName[] shows, if we invoke the `updateName()` action then the defaults for its parameters are correctly populated.
+
+[#_basics_persons-name_person-updateName,reftext='{figure-caption} {counter:refnum}.']
+.Updated `Person` with first and last names.
+image::ch02/Person-updateName-prompt-with-defaults.png[link="images/ch02/Person-updateName-prompt-with-defaults.png"]
 
 
 
@@ -67,6 +83,7 @@ The `@ParameterLayout` UI hint is required because, at least by default, the par
 
 TODO: paraname8
 
+The `@ParameterLayout` UI hint in the earlier listing is required because, at least by default, the parameter name isn't available via Java reflection to the framework.
 
 
 
