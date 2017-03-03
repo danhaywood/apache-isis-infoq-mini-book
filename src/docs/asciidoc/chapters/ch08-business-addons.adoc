@@ -10,6 +10,12 @@
 
 
 
+== Notes add-on
+
+
+remove the `Person#notes` property, replace with notes add-on
+
+
 
 
 

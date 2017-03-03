@@ -31,6 +31,119 @@ I did the following:
 * updated unit and integration tests
 * removed the BDD spec tests completely
 
+For now at least I've left the `notes` property (which came from the archetype) alone; it seems relevant.
+
+xref:_basics_persons-name_person-object[] shows this updated version of `Person`.
+
+[#_basics_persons-name_person-object,reftext='{figure-caption} {counter:refnum}.']
+.Updated `Person` with first and last names.
+image::ch02/Person-object.png[link="images/ch02/Person-object.png"]
+
+Let's explore a few of the changes in a little more detail.
+
+
+[[_basics_persons-name_properties]]
+=== Properties
+
+The new `lastName` property is almost identical to the (renamed) `firstName` property:
+
+[source,java]
+----
+@javax.jdo.annotations.Column(allowsNull = "false", length = 40)
+@Property()                                         // <1>
+@Getter @Setter
+@Title(sequence = "1")                              // <2>
+private String firstName;
+
+@javax.jdo.annotations.Column(allowsNull = "false", length = 40)
+@Property()                                         // <1>
+@Getter @Setter
+@Title(sequence = "2", prepend = " ")               // <2>
+private String lastName;
+----
+<1> Provides additional metadata (if any) about the property to the framework
+<2> The `@Title` annotation describes how to build the title (for the user to distinguish the domain object in the UI).
+Discussed further xref:_basics_persons-name_title[below].
+
+If you look at the running application then you'll see that the properties are read-only; they can only be modified using the `updateName()` action.
+Why is this?
+
+One of the attributes of the `@Property` annotation is "editing", the default of which is:
+
+[source,java]
+----
+@Property(editing=Editing.AS_CONFIGURED)
+----
+
+If you search for a file called `isis.properties`, you'll find that the archetype provides two such files, one in the `gymclass-application` module and another in the `gymclass-webapp` module.
+
+The idea is that the former (in the `application` module) is immutable, storing "policy" decisions that are not expected to change.
+The latter (in the `webapp` module) holds configuration properties that will change, eg DB connection strings when running in dev, test or prod.
+
+The `Editing.AS_CONFIGURED` value means to use the value of the `isis.objects.editing` configuration property.
+As you'll discover, this is se to "false" in `isis.properties` file, which is why editing is disabled for these two properties.
+
+On the other hand, if you take a look at the `notes property, you'll see:
+
+[source,java]
+----
+...
+@Property(editing = Editing.ENABLED)
+private String notes;
+----
+
+So here the property can be edited, overriding the global default.
+The viewer renders this as a little pencil mark, as shown in xref:_basics_persons-name_editable-property[]
+
+[#_basics_persons-name_editable-property,reftext='{figure-caption} {counter:refnum}.']
+.Updated `Person` with first and last names.
+image::ch02/editable-property.png[link="images/ch02/editable-property.png"]
+
+
+
+[[_basics_persons-name_title]]
+=== Title
+
+The title of an object is provided to allow the end-user to distinguish the domain object in the UI.
+It most prominently appears in the top of the web page displaying the object.
+Later on we'll see it is also used in hyperlinks representing references between objects.
+
+There are several different ways to build up a title.
+Using `@Title` is declarative and suitable if the title does not change with the state of the object.
+An alternative imperative approach is to write a `title()` method.
+For example, we could have:
+
+[source,java]
+----
+public String title() {
+    return getFirstName() + " " + getLastName();
+}
+----
+
+Obviously if the title varied by state of the object, then this method could get more complex, with `if` statements and so on.
+
+If no properties are annotated with `@Title`, and if there is no `title()` method, then the framework falls back to use `toString()`.
+
+
+
+.Use getters to access state
+****
+I just want to call out the importance of using getters to access state, even within the domain object itself.
+
+You need to remember that the object's state is retrieved transparently by the ORM (DataNucleus), and some state may be retrieved lazily; generally it depends on the type.
+
+If you access an instance variable directly rather than through its getter, you run the risk that the ORM may not have rehydrated that state.
+
+Broadly speaking, primitives and strings (corresponding to columns of the underlying table) will be loaded eagerly, while references to other objects (which would otherwise require a SQL JOIN) will be loaded lazily.
+
+This behaviour can be tweaked using the `javax.jdo.annotations.Persistent` annotation; search for documentation on "fetch groups".
+****
+
+
+
+
+=== The `updateName()` action
+
 Let's take a look at the updated `updateName()` action:
 
 [source,java]
@@ -59,13 +172,6 @@ public String default1UpdateName() {            // <2>
 
 
 
-xref:_basics_persons-name_person-object[] shows this updated version of `Person`.
-
-[#_basics_persons-name_person-object,reftext='{figure-caption} {counter:refnum}.']
-.Updated `Person` with first and last names.
-image::ch02/Person-object.png[link="images/ch02/Person-object.png"]
-
-
 And as xref:_basics_persons-name_person-updateName[] shows, if we invoke the `updateName()` action then the defaults for its parameters are correctly populated.
 
 [#_basics_persons-name_person-updateName,reftext='{figure-caption} {counter:refnum}.']
@@ -74,18 +180,69 @@ image::ch02/Person-updateName-prompt-with-defaults.png[link="images/ch02/Person-
 
 
 
+=== A look at the layout
 
-*** run with a cut-down app manifest
+[***TODO***]
+
+[source,xml]
+----
+<c:fieldSet name="Name">
+    <c:action id="delete"/>
+    <c:property id="firstName"/>
+    <c:property id="lastName">
+        <c:action id="updateName"/>
+    </c:property>
+</c:fieldSet>
+----
+
+In xref:_basics_persons-name_person-object[] you can see I chose to put the `lastName` property under the `firstName` property, have the `updateName()` action underneath that.
 
 
-*** look at the layout
+layout: <domainObject/> is where the title appears
 
+[source,xml]
+----
+<bs3:row>
+    <bs3:col span="12" unreferencedActions="true">
+        <c:domainObject bookmarking="AS_ROOT"/>
+    </bs3:col>
+</bs3:row>
+----
+
+
+`unreferencedActions` property
+
+`unreferencedProperties`, `unreferencedCollections`
+
+
+
+=== Comparable
+
+[***TODO***]
+
+ObjectContracts.
+
+== Using types
+
+
+== Property edits vs actions
+
+
+=== Repository queries
+
+
+
+== Paraname8 addon
 
 TODO: paraname8
 
 The `@ParameterLayout` UI hint in the earlier listing is required because, at least by default, the parameter name isn't available via Java reflection to the framework.
 
 
+
+=== Cut-down manifest
+
+*** run with a cut-down app manifest
 
 [source,bash]
 ----
