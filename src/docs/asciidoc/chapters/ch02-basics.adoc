@@ -24,20 +24,20 @@ I did the following:
 
 * renamed `name` property to `firstName`
 * added in a new `lastName` property
-* tweaked the `.layout.xml` for the new lastName property
+* tweaked the `.layout.xml` for the new `lastName` property
 * updated fixture data (in `PersonData`) to provide realistic names for people
 * updated the supporting domain services (`PersonMenu` and `PersonRepository`) to be able to create and find ``Person``s with both a first- and last name
 * changed the `updateName()` action to update both first and last names, and removed some dummy validation that came from the the simpleapp archetype
 * updated unit and integration tests
 * removed the BDD spec tests completely
 
-For now at least I've left the `notes` property (which came from the archetype) alone; it seems relevant.
+For now at least I've left the `notes` property (which came from the archetype) as it is.
 
 xref:_basics_persons-name_person-object[] shows this updated version of `Person`.
 
 [#_basics_persons-name_person-object,reftext='{figure-caption} {counter:refnum}.']
 .Updated `Person` with first and last names.
-image::ch02/Person-object.png[link="images/ch02/Person-object.png"]
+image::ch02/Person-object.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch02/Person-object.png"]
 
 Let's explore a few of the changes in a little more detail.
 
@@ -97,12 +97,12 @@ The viewer renders this as a little pencil mark, as shown in xref:_basics_person
 
 [#_basics_persons-name_editable-property,reftext='{figure-caption} {counter:refnum}.']
 .Updated `Person` with first and last names.
-image::ch02/editable-property.png[link="images/ch02/editable-property.png"]
+image::ch02/editable-property.png[link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/editable-property.png"]
 
 
 
 [[_basics_persons-name_title]]
-=== Title
+=== Updated title
 
 The title of an object is provided to allow the end-user to distinguish the domain object in the UI.
 It most prominently appears in the top of the web page displaying the object.
@@ -176,13 +176,14 @@ And as xref:_basics_persons-name_person-updateName[] shows, if we invoke the `up
 
 [#_basics_persons-name_person-updateName,reftext='{figure-caption} {counter:refnum}.']
 .Updated `Person` with first and last names.
-image::ch02/Person-updateName-prompt-with-defaults.png[link="images/ch02/Person-updateName-prompt-with-defaults.png"]
+image::ch02/Person-updateName-prompt-with-defaults.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/Person-updateName-prompt-with-defaults.png"]
 
 
 
 === A look at the layout
 
-[***TODO***]
+In xref:_basics_persons-name_person-object[] you can see that I positioned the `lastName` property under the `firstName` property, with the `updateName` action under both.
+This positioning comes from the `Person.layout.xml` file. specifically this:
 
 [source,xml]
 ----
@@ -195,10 +196,10 @@ image::ch02/Person-updateName-prompt-with-defaults.png[link="images/ch02/Person-
 </c:fieldSet>
 ----
 
-In xref:_basics_persons-name_person-object[] you can see I chose to put the `lastName` property under the `firstName` property, have the `updateName()` action underneath that.
+The layout also moves the `notes` property over to the right-hand side; check out the use of `<col>` elements for this purpose.
 
-
-layout: <domainObject/> is where the title appears
+Also, earlier on we noted that the xref:_basics_persons-name_title[title] of a domain object is rendered at the top of the page.
+In fact that was a slight simplification; actually it appears wherever the `<domainObject/>` element appears in the layout file:
 
 [source,xml]
 ----
@@ -210,39 +211,259 @@ layout: <domainObject/> is where the title appears
 ----
 
 
-`unreferencedActions` property
+=== Updated queries
 
-`unreferencedProperties`, `unreferencedCollections`
+Prior to adding the "lastName" property we had the `PersonMenu` domain service providing an action to search for `Person` instances by way of the `PersonRepository`.
+In adding the "lastName" property I decided to generalize this so that searching for a person by name meant matching to use either first name _or_ the last name.
+This required a change to the JDOQL query, defined on `Person`:
+
+[source,java]
+----
+@javax.jdo.annotations.Queries({
+        @javax.jdo.annotations.Query(
+                name = "findByName",
+                value = "SELECT "
+                        + "FROM domainapp.modules.persons.dom.impl.Person "
+                        + "WHERE firstName.indexOf(:name) >= 0 "
+                        + "   || lastName.indexOf(:name) >= 0 "),
+        ...
+})
+...
+public class Person ... { ... }
+----
+
+This query is written in JDOQL.
+Note that SQL functions (such as a substring match, here) tend to be written using a Java-like syntax.
+
+I also required an exact match on both first name and last name, so I updated the `PersonRepository` domain service with a new finder:
+
+[source,java]
+----
+public class PersonRepository {
+    ...
+    public Person findByFirstNameAndLastName(String firstName, String lastName) {
+        return repositoryService.uniqueMatch(
+                new QueryDefault<>(
+                        Person.class,
+                        "findByFirstNameAndLastName",
+                        "firstName", firstName,
+                        "lastName", lastName));
+    }
+    ...
+}
+----
+
+This also required a new JDOQL query defined on `Person`:
+
+[source,java]
+----
+@javax.jdo.annotations.Queries({
+        ...
+        @javax.jdo.annotations.Query(
+                name = "findByFirstNameAndLastName",
+                value = "SELECT "
+                        + "FROM domainapp.modules.persons.dom.impl.Person "
+                        + "WHERE firstName == :firstName "
+                        + "   && lastName == :lastName ")
+})
+...
+public class Person ... { ... }
+----
+
+JDO provides several link:http://www.datanucleus.org/products/datanucleus/jdo/query.html#jpql[different ways of writing queries], at various levels of abstraction and power: type-safe queries, criteria API, JDOQL and direct SQL.
+Or, there are third-party options such as link:http://www.querydsl.com/[QueryDSL].
+
+In this case study I'm going to stick with JDOQL.
+
+
+== Object identity (link:https://github.com/danhaywood/gymclass/tree/2.2-exception-recognizer-for-Person-duplicates[2.2^])
+
+For every entity you'll need to think about its identity: how is it uniquely distinguished from other instances of the same type?
+
+So far as the database is concerned, JDO allows the identity (primary key) to be assigned either automatically (by the ORM) as a surrogate identifier, or it can be assigned explicitly by the application.
+The first of these options - using a surrogate identifier - is reasonable in most cases.
+There is then the decision as to which strategy the ORM should use to actually generate the surrogate id.
+Most RDBMS provide some built-in mechanism for this, so we can use another JDO annotation to select this as appropriate.
+
+While a surrogate identifier is useful within the database, it doesn't have any meaning to the end-user.
+We therefore also need to determine which set of properties of the domain object provide  its identity from a business perspective.
+
+In many (though not all) cases this will be the same as the xref:_basics_persons-name_title[title] of the object.
+However, a title needs only be "unique enough" to allow the user identify the domain object in the UI (and it may in fact have additional supplementary information, eg the status of an object).
+The business identity of the object must be genuinely unique in the database too.
+
+In the case study, when I added `lastName` to the `Person` entity, I decided to make it part of the object identity.
+That involved updating the JDO annotations, and updating the implementation of `Comparable`:
+
+[source,java]
+----
+@javax.jdo.annotations.PersistenceCapable(
+        identityType=IdentityType.DATASTORE,                                    // <1>
+        schema = "persons"
+)
+@javax.jdo.annotations.DatastoreIdentity(
+        strategy=javax.jdo.annotations.IdGeneratorStrategy.IDENTITY,            // <2>
+        column="id")
+...
+@javax.jdo.annotations.Unique(
+    name="Person_lastName_firstName_UNQ", members = {"lastName", "firstName"}   // <3>
+)
+public class Person implements Comparable<Person> {
+    ...
+    public int compareTo(final Person other) {
+        return ObjectContracts.compare(this, other, "lastName", "firstName");   // <4>
+    }
+}
+----
+<1> Indicates that an ORM-managed surrogate identifier will be used...
+<2> ...with the values assigned by the database ("identity" strategy)
+<3> Defines the business key uniqueness
+<4> Corresponding implementation of `Comparable<T>` interface
+
+It's also best practice for the domain object to implement `Comparable`, and this should be consistent with the uniqueness constraint.
+The `ObjectContracts` class you see here is provided as a utility class as part of the Apache Isis applib (the library that contains all the annotations and so forth).
+As you might imagine, this will compare the objects by last name and then first name.
+
+[TIP]
+====
+Implementing `Comparable` also means that when we start to associate collections of objects with each other then we'll be able to use `Set<T>` as the collection type, and the order of the objects in the table will be "obvious" to the end-user (ie the natural ordering of the entity type).
+====
+
+
+As things stand it's unlikely that this design will suffice: what happens when we get two people with the same name, for example?
+If I try to create a such a duplicate user, I get the message shown in xref:_basics_persons-name_person-duplicate[].
+
+
+[#_basics_persons-name_person-duplicate,reftext='{figure-caption} {counter:refnum}.']
+.Updated `Person` with first and last names.
+image::ch02/attempt-to-create-duplicate-Person.png[pdfwidth="30%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/attempt-to-create-duplicate-Person.png"]
+
+That's not the most user-friendly error message, but we can at least start the conversation by demonstrating the issue to the domain expert.
+We can then decide together what's the right way forward.
+Probably I'd suggest a surrogate identifier (a membership number or similar); if that made sense then there might be a discussion about how that identifier is allocated (just a number, or some other scheme).
+
+We can also improve the error message.
+Apache Isis has a whole bunch of plugin points: optional SPI (service provider) interfaces that can optionally be implemented.
+One of these is the `ExceptionRecognizer2` interface.
+Any time an exception is thrown by the application (whether in the persistence layer or domain layer) any implementation(s) of this SPI are consulted to see if the exception's message can be converted into something less cryptic for the end-user.
+
+For example, here's an implementation of `ExceptionRecognizer2` for `Person`:
+
+[source,java]
+----
+@DomainService(nature = NatureOfService.DOMAIN)                     // <1>
+public static class UniqueConstraintViolationRecognizer
+                        implements ExceptionRecognizer2 {           // <2>
+    ...
+    public String recognize(final Throwable ex) {
+        final String message = ex.getMessage();
+        if(message != null && message.contains("Person_lastName_firstName_UNQ")) {
+            return "A Person with that (first and last) name already exists";
+        }
+        return null;
+    }
+    public Recognition recognize2(final Throwable ex) {
+        final String reason = recognize(ex);
+        return reason != null
+                ? new Recognition(Category.CONSTRAINT_VIOLATION, reason)
+                : null;
+    }
+}
+----
+<1> automatically picked up as a service by Classpath scanning
+<2> implements the SPI service
+
+With this implementation added to our application, as xref:attempt-to-create-duplicate-Person-exception-recognizer[] shows the error message generated is much more friendly.
+
+[#attempt-to-create-duplicate-Person-exception-recognizer,reftext='{figure-caption} {counter:refnum}.']
+.Updated `Person` with first and last names.
+image::ch02/attempt-to-create-duplicate-Person-exception-recognizer.png[pdfwidth="30%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/attempt-to-create-duplicate-Person-exception-recognizer.png"]
+
+All that said, this is only a demo app, so I'm going to choose to ignore this imperfection for now and press on.
 
 
 
-=== Comparable
+== Paraname8 addon (link:https://github.com/danhaywood/gymclass/tree/2.3-paraname8[2.3^])
 
-[***TODO***]
+The Apache Isis framework tries to infer as much of the structure of the domain objects directly from Java code.
+For example, properties are inferred by the presence of getters returning a scalar, and collections are getters returning a collection.
+Actions are remaining `public` methods.
+Annotations are typically used for metadata that cannot be inferred in this way.
 
-ObjectContracts.
+If we look at the `updateName(...)` action we see that the parameter names have the `@ParameterLayout` annotation:
 
-== Using types
+[source,java]
+----
+public Person updateName(
+        @Parameter(maxLength = 40)
+        @ParameterLayout(named = "First name")
+        final String firstName,
+        @Parameter(maxLength = 40)
+        @ParameterLayout(named = "Last name")
+        final String lastName) {
+    ...
+}
+----
 
+Java's reflection API (that Apache Isis uses heavily) was only extended to allow the parameter name to be inferred as of Java 8.
+Since the version of Apache Isis that we're using still supports Java 7, we need the `@ParameterLayout`.
 
-== Property edits vs actions
+Instead, we can bump up the app to run under Java 8, and we use the http://github.com/isisaddons/isis-metamodel-paraname8[Isis addons' paraname8] metamodel extension.
+The README for that module explains how to configure it; the key requirement is adding this line:
 
+[source,ini]
+----
+isis.reflector.facets.include=\
+        org.isisaddons.metamodel.paraname8.NamedFacetOnParameterParaname8Factory
+----
 
-=== Repository queries
+to the `isis.properties` file, which "teaches" the framework to use the updated Java 8 reflection API.
 
+With these changes made we can get rid of `@ParameterLayout` everywhere, reducing some boilerplate:
 
-
-== Paraname8 addon
-
-TODO: paraname8
-
-The `@ParameterLayout` UI hint in the earlier listing is required because, at least by default, the parameter name isn't available via Java reflection to the framework.
-
+[source,java]
+----
+public Person updateName(
+        @Parameter(maxLength = 40)
+        final String firstName,
+        @Parameter(maxLength = 40)
+        final String lastName) {
+    ...
+}
+----
 
 
 === Cut-down manifest
 
+Bootstrapping an Apache Isis application requires an implementation of the `AppManifest` interface.
+
+
+The `AppManifest`
 *** run with a cut-down app manifest
+
+[source,java]
+----
+public class DomainAppAppManifest implements AppManifest {
+    ...
+    public List<Class<?>> getModules() {
+        List<Class<?>> modules = Lists.newArrayList();
+        modules.addAll(Arrays.asList(
+                PersonsModuleDomSubmodule.class,
+//                TimeTableModuleDomSubmodule.class,
+//                CustomersModuleDomSubmodule.class,
+//                EmployeesModuleDomSubmodule.class,
+//                ClassesModuleDomSubmodule.class,
+                DomainAppApplicationModuleFixtureSubmodule.class,
+                DomainAppApplicationModuleServicesSubmodule.class
+        ));
+        modules.addAll(additionalModules);
+        return modules;
+    }
+    ...
+}
+----
+
+To save building everything
 
 [source,bash]
 ----
@@ -250,6 +471,21 @@ mvn -pl module-persons,application,webapp clean install -o
 ----
 
 
+
+
+== More on layouts
+
+`unreferencedActions` property
+
+`unreferencedProperties`, `unreferencedCollections`
+
+
+Use of superclass vs subclass layouts.
+
+
+== Using types ???
+
+XxxType
 
 
 
