@@ -13,8 +13,8 @@ In this chapter we'll ...
 ** realistic data, migration-driven development
 * nouns and verbs
 
-[[_basics_persons-name]]
-== ``Person``'s name [link:https://github.com/danhaywood/gymclass/tree/_2.1-Person-first-name-and-last-name[_2.1^]]
+[[__basics_persons-name]]
+== ``Person``'s name [link:https://github.com/danhaywood/gymclass/tree/_2.1-Person-first-name-and-last-name[2.1^]]
 
 
 Let's start out by making `Person` a little bit more realistic.
@@ -33,17 +33,17 @@ I did the following:
 
 For now at least I've left the `notes` property (which came from the archetype) as it is.
 
-xref:_basics_persons-name_person-object[] shows this updated version of `Person`.
+xref:__basics_persons-name_person-object[] shows this updated version of `Person`.
 
-[#_basics_persons-name_person-object,reftext='{figure-caption} {counter:refnum}.']
+[#__basics_persons-name_person-object,reftext='{figure-caption} {counter:refnum}.']
 .Updated `Person` with first and last names.
 image::ch02/Person-object.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch02/Person-object.png"]
 
 Let's explore a few of the changes in a little more detail.
 
 
-[[_basics_persons-name_properties]]
-=== Properties
+[[__basics_properties]]
+== Properties
 
 The new `lastName` property is almost identical to the (renamed) `firstName` property:
 
@@ -63,7 +63,7 @@ private String lastName;
 ----
 <1> Provides additional metadata (if any) about the property to the framework
 <2> The `@Title` annotation describes how to build the title (for the user to distinguish the domain object in the UI).
-Discussed further xref:_basics_persons-name_title[below].
+Discussed further xref:__basics_persons-name_title[below].
 
 If you look at the running application then you'll see that the properties are read-only; they can only be modified using the `updateName()` action.
 Why is this?
@@ -81,28 +81,35 @@ The idea is that the former (in the `application` module) is immutable, storing 
 The latter (in the `webapp` module) holds configuration properties that will change, eg DB connection strings when running in dev, test or prod.
 
 The `Editing.AS_CONFIGURED` value means to use the value of the `isis.objects.editing` configuration property.
-As you'll discover, this is se to "false" in `isis.properties` file, which is why editing is disabled for these two properties.
+As you'll discover, this is set to "false" in `isis.properties` file, which is why editing is disabled for these two properties.
 
 On the other hand, if you take a look at the `notes property, you'll see:
 
 [source,java]
 ----
-...
 @Property(editing = Editing.ENABLED)
 private String notes;
 ----
 
 So here the property can be edited, overriding the global default.
-The viewer renders this as a little pencil mark, as shown in xref:_basics_persons-name_editable-property[]
+The viewer renders this as a little pencil mark in the bottom-right of the field, as shown in xref:__basics_persons-name_editable-property[]
 
-[#_basics_persons-name_editable-property,reftext='{figure-caption} {counter:refnum}.']
-.Updated `Person` with first and last names.
+[#__basics_persons-name_editable-property,reftext='{figure-caption} {counter:refnum}.']
+.Icon indicating a property is editable.
 image::ch02/editable-property.png[link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/editable-property.png"]
 
+If you want to allow the end-user to update multiple properties at the same time (such as the ``Person``'s first- and last names), then you'll need to use an action; see xref:__basics_persons-name_updateName[below].
+
+If only one property needs to be changed, then you have a choice: you could either make that property editable, or you could provide an action.
+Which you choose is to some degree a matter of style/taste, even so my recommendation is to use property edits only for minor/insignificant modifications to state where there is no business logic.
+Actions on the other hand should indicate something significant from a business perspective.
+
+In our gym case study, I could imagine that a gym member might want to renew their membership.
+Even if this only changes a single property of the domain object (such as a "paid up until" date), I would still model it as an action because it the term "renew" will have significance to the end user.
 
 
-[[_basics_persons-name_title]]
-=== Updated title
+[[__basics_title]]
+== Updated title
 
 The title of an object is provided to allow the end-user to distinguish the domain object in the UI.
 It most prominently appears in the top of the web page displaying the object.
@@ -141,8 +148,8 @@ This behaviour can be tweaked using the `javax.jdo.annotations.Persistent` annot
 
 
 
-
-=== The `updateName()` action
+[[__basics_updateName]]
+== The `updateName()` action
 
 Let's take a look at the updated `updateName()` action:
 
@@ -172,17 +179,18 @@ public String default1UpdateName() {            // <2>
 
 
 
-And as xref:_basics_persons-name_person-updateName[] shows, if we invoke the `updateName()` action then the defaults for its parameters are correctly populated.
+And as xref:__basics_persons-name_person-updateName[] shows, if we invoke the `updateName()` action then the defaults for its parameters are correctly populated.
 
-[#_basics_persons-name_person-updateName,reftext='{figure-caption} {counter:refnum}.']
+[#__basics_persons-name_person-updateName,reftext='{figure-caption} {counter:refnum}.']
 .Updated `Person` with first and last names.
 image::ch02/Person-updateName-prompt-with-defaults.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/Person-updateName-prompt-with-defaults.png"]
 
 
 
-=== A look at the layout
+[[__basics_layout]]
+== A look at the layout
 
-In xref:_basics_persons-name_person-object[] you can see that I positioned the `lastName` property under the `firstName` property, with the `updateName` action under both.
+In xref:__basics_persons-name_person-object[] you can see that I positioned the `lastName` property under the `firstName` property, with the `updateName` action under both.
 This positioning comes from the `Person.layout.xml` file. specifically this:
 
 [source,xml]
@@ -198,7 +206,7 @@ This positioning comes from the `Person.layout.xml` file. specifically this:
 
 The layout also moves the `notes` property over to the right-hand side; check out the use of `<col>` elements for this purpose.
 
-Also, earlier on we noted that the xref:_basics_persons-name_title[title] of a domain object is rendered at the top of the page.
+Also, earlier on we noted that the xref:__basics_persons-name_title[title] of a domain object is rendered at the top of the page.
 In fact that was a slight simplification; actually it appears wherever the `<domainObject/>` element appears in the layout file:
 
 [source,xml]
@@ -211,11 +219,40 @@ In fact that was a slight simplification; actually it appears wherever the `<dom
 ----
 
 
-=== Updated queries
+One of the principles of Apache Isis is that it will always generate a UI representation of the domain objects.
+
+So what happens if you forget to reference a property, collection or action of the domain object?
+
+If you look elsewhere in the `layout.xml` you'll see that exactly one section has an attribute of `unreferencedActions`, `unreferencedProperties` or `unreferencedCollections`: the layout is considered invalid if it does not include this.
+As you've probably figured out, any class members that are not referenced elsewhere will be rendered in these sections.
+
+For example, in `Person.layout.xml` you'll see that I've added:
+
+[source,xml]
+----
+<bs3:tab name="Other">
+    <bs3:row>
+        <bs3:col span="12">
+            <c:fieldSet name="Other" unreferencedProperties="true"/>
+        </bs3:col>
+    </bs3:row>
+</bs3:tab>
+----
+
+This means that, if I were to add a new property to `Person` and forget to update `Person.layout.xml`, then it'll appear in a new "Other" tab.
+
+
+And what happens if there's no supporting `layout.xml` file at all?
+Well, in this case the framework will fallback to reading the various `@...Layout` annotations (and `@MemberOrder` and `@MemberGroupLayout`) of the class itself.
+And if there are no such annotations, it will use defaults baked into the framework:  properties listed alphabetically on the left-hand side, and collections listed on the right, actions at the top.
+
+
+[[__basics_queries]]
+== Updated queries
 
 Prior to adding the "lastName" property we had the `PersonMenu` domain service providing an action to search for `Person` instances by way of the `PersonRepository`.
 In adding the "lastName" property I decided to generalize this so that searching for a person by name meant matching to use either first name _or_ the last name.
-This required a change to the JDOQL query, defined on `Person`:
+This required a change to the query's definition, found on the `Person` class:
 
 [source,java]
 ----
@@ -272,25 +309,25 @@ public class Person ... { ... }
 
 JDO provides several link:http://www.datanucleus.org/products/datanucleus/jdo/query.html#jpql[different ways of writing queries], at various levels of abstraction and power: type-safe queries, criteria API, JDOQL and direct SQL.
 Or, there are third-party options such as link:http://www.querydsl.com/[QueryDSL].
+However, in this case study I'm going to stick with JDOQL.
 
-In this case study I'm going to stick with JDOQL.
 
-
-== Object identity (link:https://github.com/danhaywood/gymclass/tree/_2.2-exception-recognizer-for-Person-duplicates[_2.2^])
+== Object identity (link:https://github.com/danhaywood/gymclass/tree/_2.2-exception-recognizer-for-Person-duplicates[2.2^])
 
 For every entity you'll need to think about its identity: how is it uniquely distinguished from other instances of the same type?
 
 So far as the database is concerned, JDO allows the identity (primary key) to be assigned either automatically (by the ORM) as a surrogate identifier, or it can be assigned explicitly by the application.
 The first of these options - using a surrogate identifier - is reasonable in most cases.
-There is then the decision as to which strategy the ORM should use to actually generate the surrogate id.
+
+This then leads to a further decision: which strategy the ORM should use to actually generate the surrogate id?
 Most RDBMS provide some built-in mechanism for this, so we can use another JDO annotation to select this as appropriate.
 
 While a surrogate identifier is useful within the database, it doesn't have any meaning to the end-user.
 We therefore also need to determine which set of properties of the domain object provide  its identity from a business perspective.
 
-In many (though not all) cases this will be the same as the xref:_basics_persons-name_title[title] of the object.
+In many (though not all) cases this will be the same as the xref:__basics_persons-name_title[title] of the object.
 However, a title needs only be "unique enough" to allow the user identify the domain object in the UI (and it may in fact have additional supplementary information, eg the status of an object).
-The business identity of the object must be genuinely unique in the database too.
+The business identity of the object on the other hand must be genuinely unique in the database too.
 
 In the case study, when I added `lastName` to the `Person` entity, I decided to make it part of the object identity.
 That involved updating the JDO annotations, and updating the implementation of `Comparable`:
@@ -320,7 +357,7 @@ public class Person implements Comparable<Person> {
 <3> Defines the business key uniqueness
 <4> Corresponding implementation of `Comparable<T>` interface
 
-It's also best practice for the domain object to implement `Comparable`, and this should be consistent with the uniqueness constraint.
+It's best practice for the domain object to implement `Comparable`, and this should be consistent with the uniqueness constraint.
 The `ObjectContracts` class you see here is provided as a utility class as part of the Apache Isis applib (the library that contains all the annotations and so forth).
 As you might imagine, this will compare the objects by last name and then first name.
 
@@ -331,16 +368,16 @@ Implementing `Comparable` also means that when we start to associate collections
 
 
 As things stand it's unlikely that this design will suffice: what happens when we get two people with the same name, for example?
-If I try to create a such a duplicate user, I get the message shown in xref:_basics_persons-name_person-duplicate[].
+If I try to create a such a duplicate user, I get the message shown in xref:__basics_persons-name_person-duplicate[].
 
 
-[#_basics_persons-name_person-duplicate,reftext='{figure-caption} {counter:refnum}.']
+[#__basics_persons-name_person-duplicate,reftext='{figure-caption} {counter:refnum}.']
 .Updated `Person` with first and last names.
 image::ch02/attempt-to-create-duplicate-Person.png[pdfwidth="30%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/attempt-to-create-duplicate-Person.png"]
 
 That's not the most user-friendly error message, but we can at least start the conversation by demonstrating the issue to the domain expert.
 We can then decide together what's the right way forward.
-Probably I'd suggest a surrogate identifier (a membership number or similar); if that made sense then there might be a discussion about how that identifier is allocated (just a number, or some other scheme).
+Probably I'd suggest a surrogate identifier (a membership number or similar); if that made sense then there might also be a discussion about how that identifier is allocated (just a number, or some other scheme).
 
 We can also improve the error message.
 Apache Isis has a whole bunch of plugin points: optional SPI (service provider) interfaces that can optionally be implemented.
@@ -379,11 +416,11 @@ With this implementation added to our application, as xref:attempt-to-create-dup
 .Updated `Person` with first and last names.
 image::ch02/attempt-to-create-duplicate-Person-exception-recognizer.png[pdfwidth="30%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/imagesch02/attempt-to-create-duplicate-Person-exception-recognizer.png"]
 
-All that said, this is only a demo app, so I'm going to choose to ignore this imperfection for now and press on.
+All that said, this is only a demo app, so I'm not going to overcomplicate things with a surrogate membership number etc., but will just press on.
 
 
 
-== Paraname8 addon (link:https://github.com/danhaywood/gymclass/tree/_2.3-paraname8[_2.3^])
+== Paraname8 addon (link:https://github.com/danhaywood/gymclass/tree/_2.3-paraname8[2.3^])
 
 The Apache Isis framework tries to infer as much of the structure of the domain objects directly from Java code.
 For example, properties are inferred by the presence of getters returning a scalar, and collections are getters returning a collection.
@@ -431,61 +468,6 @@ public Person updateName(
     ...
 }
 ----
-
-
-=== Cut-down manifest
-
-Bootstrapping an Apache Isis application requires an implementation of the `AppManifest` interface.
-
-
-The `AppManifest`
-*** run with a cut-down app manifest
-
-[source,java]
-----
-public class DomainAppAppManifest implements AppManifest {
-    ...
-    public List<Class<?>> getModules() {
-        List<Class<?>> modules = Lists.newArrayList();
-        modules.addAll(Arrays.asList(
-                PersonsModuleDomSubmodule.class,
-//                TimeTableModuleDomSubmodule.class,
-//                CustomersModuleDomSubmodule.class,
-//                EmployeesModuleDomSubmodule.class,
-//                ClassesModuleDomSubmodule.class,
-                DomainAppApplicationModuleFixtureSubmodule.class,
-                DomainAppApplicationModuleServicesSubmodule.class
-        ));
-        modules.addAll(additionalModules);
-        return modules;
-    }
-    ...
-}
-----
-
-To save building everything
-
-[source,bash]
-----
-mvn -pl module-persons,application,webapp clean install -o
-----
-
-
-
-
-== More on layouts
-
-`unreferencedActions` property
-
-`unreferencedProperties`, `unreferencedCollections`
-
-
-Use of superclass vs subclass layouts.
-
-
-== Using types ???
-
-XxxType
 
 
 

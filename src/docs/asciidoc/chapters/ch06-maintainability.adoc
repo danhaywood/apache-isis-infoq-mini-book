@@ -6,6 +6,54 @@
 
 
 
+=== Cut-down manifest
+
+Bootstrapping an Apache Isis application requires an implementation of the `AppManifest` interface.
+
+
+The `AppManifest`
+*** run with a cut-down app manifest
+
+[source,java]
+----
+public class DomainAppAppManifest implements AppManifest {
+    ...
+    public List<Class<?>> getModules() {
+        List<Class<?>> modules = Lists.newArrayList();
+        modules.addAll(Arrays.asList(
+                PersonsModuleDomSubmodule.class,
+//                TimeTableModuleDomSubmodule.class,
+//                CustomersModuleDomSubmodule.class,
+//                EmployeesModuleDomSubmodule.class,
+//                ClassesModuleDomSubmodule.class,
+                DomainAppApplicationModuleFixtureSubmodule.class,
+                DomainAppApplicationModuleServicesSubmodule.class
+        ));
+        modules.addAll(additionalModules);
+        return modules;
+    }
+    ...
+}
+----
+
+To save building everything
+
+[source,bash]
+----
+mvn -pl module-persons,application,webapp clean install -o
+----
+
+
+
+
+== Using types ???
+
+XxxType
+
+
+
+
+
 
 
 == What we've learnt

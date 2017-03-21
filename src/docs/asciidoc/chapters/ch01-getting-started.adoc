@@ -12,7 +12,7 @@ Along the way we'll take a few diversions to describe some of the background and
 But for now, let's get on with the show.
 
 
-[[_getting-started_introducing-the-case-study]]
+[[__getting-started_introducing-the-case-study]]
 == Introducing the Case Study
 
 In an effort to get a bit fitter I recently joined a gym, and I really enjoy attending their various classes (spinning and barbells, yeah!).
@@ -20,10 +20,10 @@ One can book a class up to seven days in advance, and there's limited number of 
 But to book a class you need to phone up the gym; there's no website nor mobile app.
 So this is what gave me the idea for the case study we're going to use in this mini-book.
 
-xref:_getting-started_introducing-the-case-study_diagram[] shows a UML class diagram for the main entities that make up our domain.
+xref:__getting-started_introducing-the-case-study_diagram[] shows a UML class diagram for the main entities that make up our domain.
 
 
-[#_getting-started_introducing-the-case-study_diagram,reftext='{figure-caption} {counter:refnum}.']
+[#__getting-started_introducing-the-case-study_diagram,reftext='{figure-caption} {counter:refnum}.']
 .Case study
 image::ch01/class-diagram.png[width="500px",pdfwidth="60%", link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/class-diagram.png"]
 
@@ -44,9 +44,9 @@ The former is an actual occurrance of a timetabled gym class, for example "Pilat
 The latter is the `GymMember` who's actually going to participate in one of the ``GymClass``es.
 
 I've used link:https://en.wikipedia.org/wiki/Object_Modeling_in_Color[Coad Colors^] to indicate the nature of the various classes; I learnt this technique a long time ago and I still find it useful occasionally.
-xref:_getting-started_introducing-the-case-study_coad-colors[] shows the general direction of dependencies; following this simple rule helped me identify some missing concepts (for example `GymClassDescription` vs `GymClass`.
+xref:__getting-started_introducing-the-case-study_coad-colors[] shows the general direction of dependencies; following this simple rule helped me identify some missing concepts (for example `GymClassDescription` vs `GymClass`.
 
-[#_getting-started_introducing-the-case-study_coad-colors,reftext='{figure-caption} {counter:refnum}.']
+[#__getting-started_introducing-the-case-study_coad-colors,reftext='{figure-caption} {counter:refnum}.']
 .Coad Colors
 image::ch01/coad-colors.png[width="800px", pdfwidth="100%", link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/coad-colors.png"]
 
@@ -56,7 +56,8 @@ Such loops are always worth looking at more closely to make sure that they make 
 In this case they do: sometimes the regular instructor who normally leads the class isn't available and so another substitutes in for a particular scheduled gym class.
 
 As for the modules themselves, there are _no_ loops between the modules.
-This is very important: it means that we can implement each module as a Maven module, and then rely upon Maven itself to ensure that the application doesn't become a link:https://en.wikipedia.org/wiki/Big_ball_of_mud[big ball of mud^].
+This will be useful: it means that we can implement each module as a Maven module, and then rely upon Maven itself to ensure that the application doesn't become a link:https://en.wikipedia.org/wiki/Big_ball_of_mud[big ball of mud^].
+If there were loops, then we could use the link:https://en.wikipedia.org/wiki/Dependency_inversion_principle[dependency inversion principle] to remove any cyclic dependencies.
 
 .Exploring the domain together
 ****
@@ -68,7 +69,7 @@ However, I'm certain that if we were building a gym class booking system "for re
 ****
 
 
-[[_getting-started_introducing-the-case-study_case-study-repo]]
+[[__getting-started_introducing-the-case-study_case-study-repo]]
 === The Case Study Repo
 
 To prevent this mini-book just being listing after listing, I'm not going to exhaustively spell out all the source code that makes up the application.
@@ -79,7 +80,7 @@ This means that you can (A) check out the code at any point, and (b) you can use
 Still, if you want to follow along, you will need to install some software.
 Next section looks at the prerequisites.
 
-[[_getting-started_prereqs]]
+[[__getting-started_prereqs]]
 == Prereqs
 
 Apache Isis is a Java framework, and we build with Maven.
@@ -98,8 +99,8 @@ You'll find setup instructions for both these IDEs on the link:http://isis.apach
 If you're an link://http://netbeans.apache.org[Apache NetBeans^](TM) user then I'm sure you'll have no problems also; the main requirement is good Maven support.
 
 
-[[_getting-started_using-the-maven-archetype-to-generate-the-app]]
-== Using the maven archetype to generate the app [link:https://github.com/danhaywood/gymclass/tree/_1.1-as-generated-by-simpleapp-archetype[_1.1^]]
+[[__getting-started_using-the-maven-archetype-to-generate-the-app]]
+== Using the maven archetype to generate the app [link:https://github.com/danhaywood/gymclass/tree/_1.1-as-generated-by-simpleapp-archetype[1.1^]]
 
 Apache Isis provides the link:http://isis.apache.org/guides/ugfun.html#_ugfun_getting-started_simpleapp-archetype["SimpleApp" Maven archetype^] to get you started.
 So that's what I'll use.
@@ -136,12 +137,12 @@ And I'll tag that immediately:
 
 [source,bash]
 ----
-git tag 1.1-as-generated-by-simpleapp-archetype
-git push origin 1.1-as-generated-by-simpleapp-archetype
+git tag _1.1-as-generated-by-simpleapp-archetype
+git push origin _1.1-as-generated-by-simpleapp-archetype
 ----
 
 
-[[_getting-started_running-the-app]]
+[[__getting-started_running-the-app]]
 == Running the app
 
 Even though we've not made any changes, you might want to try out the app at this point.
@@ -155,9 +156,9 @@ git checkout _1.1-as-generated-by-simpleapp-archetype
 
 [TIP]
 ====
-If you go to the github website you'll also be able to inspect the repo at this point by choosing the appropriate tag, as shown in xref:_getting-started_running-the-app_github-tag[].
+If you go to the github website you'll also be able to inspect the repo at this point by choosing the appropriate tag, as shown in xref:__getting-started_running-the-app_github-tag[].
 
-[#_getting-started_running-the-app_github-tag,reftext='{figure-caption} {counter:refnum}.']
+[#__getting-started_running-the-app_github-tag,reftext='{figure-caption} {counter:refnum}.']
 .Select tag from the github website
 image::ch01/github-tag.png[pdfwidth="30%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/github-tag.png"]
 
@@ -175,18 +176,18 @@ mvn -pl webapp jetty:run
 ----
 
 Navigate to link:http://localhost:8080[localhost:8080^] to open up the index page, as shown in
-xref:_getting-started_running-the-app_index-page[].
+xref:__getting-started_running-the-app_index-page[].
 
-[#_getting-started_running-the-app_index-page,reftext='{figure-caption} {counter:refnum}.']
+[#__getting-started_running-the-app_index-page,reftext='{figure-caption} {counter:refnum}.']
 .Index page for the app generated by simpleapp archetype
 image::ch01/simpleapp-index.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/simpleapp-index.png"]
 
 The index page for the app shows two links: "wicket/" and "swagger-ui/".
 Clicking on the "wicket/" link will take you to to a login page, where you can use `sven`/`pass` as a default user and password.
 
-From there you are at the home page and you can create, find and update ``SimpleObject``s, as shown in xref:_getting-started_running-the-app_simple-object[].
+From there you are at the home page and you can create, find and update ``SimpleObject``s, as shown in xref:__getting-started_running-the-app_simple-object[].
 
-[#_getting-started_running-the-app_simple-object,reftext='{figure-caption} {counter:refnum}.']
+[#__getting-started_running-the-app_simple-object,reftext='{figure-caption} {counter:refnum}.']
 .A "Simple object"
 image::ch01/simpleapp-object.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/simpleapp-object.png"]
 
@@ -197,9 +198,9 @@ By default the application is configured to run against an in-memory database (H
 That means that each time you run up the application, you'll have to start anew.
 
 Obviously, that would get pretty tiresome pretty quickly, so to save yourself some time you can run up a fixture, using `Prototyping > Run Fixture Script`.
-This will bring up an action prompt allowing you to select the fixture to run, as shown in xref:_getting-started_running-the-app_fixtures[].
+This will bring up an action prompt allowing you to select the fixture to run, as shown in xref:__getting-started_running-the-app_fixtures[].
 
-[#_getting-started_running-the-app_fixtures,reftext='{figure-caption} {counter:refnum}.']
+[#__getting-started_running-the-app_fixtures,reftext='{figure-caption} {counter:refnum}.']
 .Run fixtures to set up the app into a known state
 image::ch01/simpleapp-run-fixture-prompt.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/simpleapp-run-fixture-prompt.png"]
 
@@ -207,7 +208,7 @@ Having a fixture script is a great way to define the context for exploring a par
 Later on [***TODO***] we'll see that fixtures are also used within Apache Isis' support for writing the integration tests for those user stories.
 
 
-[[_getting-started_taking-a-look-around]]
+[[__getting-started_taking-a-look-around]]
 == Taking a look around
 
 Before we start refactoring the application towards our case study's domain, let's quickly review the source code that the archetype generates for us.
@@ -286,7 +287,7 @@ If using an IDE, you may need to enable the appropriate settings (see the link:h
 <4> The `@Title` annotation is used to provide a human-readable label to identify the domain object.
 This doesn't need to be unique, just "unique enough".
 
-As xref:_getting-started_running-the-app_simple-object[] showed, the framework automatically renders these properties in the UI.
+As xref:__getting-started_running-the-app_simple-object[] showed, the framework automatically renders these properties in the UI.
 
 The `SimpleObject` entity doesn't have any collections, but it does define a couple of actions:
 
@@ -318,7 +319,7 @@ The object returned (if any) indicates what the framework should render next (of
 <3> Calls injected `TitleService` domain service (provided by the framework) to display a message (shown as a "toast" popup)
 <4> Calls injected `RepositoryService` domain service (provided by the framework) to actually delete this domain object from the database.
 
-Again in xref:_getting-started_running-the-app_simple-object[] you'll see that "changeName" and "delete" both appear as buttons in the UI.
+Again in xref:__getting-started_running-the-app_simple-object[] you'll see that "changeName" and "delete" both appear as buttons in the UI.
 
 Actions are really, really important; ultimately they are what makes your application more than a simple link:https://en.wikipedia.org/wiki/Create,_read,_update_and_delete[CRUD^] app.
 It's quite common for actions to delegate to injected domain services, provided either by the framework (as is the case here) or by domain services defined by the application itself.
@@ -406,9 +407,9 @@ Fun fact: the external examiner for Richard's thesis was link:https://en.wikiped
 
 
 
-== Refactor [link:https://github.com/danhaywood/gymclass/tree/_1.2-simple-module-refactored-to-person-module[_1.2^]]
+== Refactor [link:https://github.com/danhaywood/gymclass/tree/_1.2-simple-module-refactored-to-person-module[1.2^]]
 
-As we surveyed xref:_getting-started_taking-a-look-around[above], the archetype gives us a single module called `simple`, with a single domain class called `SimpleObject`.
+As we surveyed xref:__getting-started_taking-a-look-around[above], the archetype gives us a single module called `simple`, with a single domain class called `SimpleObject`.
 As it happens, the structure of that entity is quite similar to the `Person` entity that we need in the `persons` module, so I decided to just do a little refactoring:
 
 * renamed `module-simple` directory to `module-persons`
@@ -449,11 +450,18 @@ git checkout _1.2-simple-module-refactored-to-person-module
 ----
 
 
-For the meantime, xref:_getting-started_placeholders_home-page[] shows the app as it currently stands.
+For the meantime, xref:__getting-started_placeholders_home-page[] shows the app as it currently stands.
 
-[#_getting-started_placeholders_home-page,reftext='{figure-caption} {counter:refnum}.']
+[#__getting-started_placeholders_home-page,reftext='{figure-caption} {counter:refnum}.']
 .Index page for the app generated by simpleapp archetype
-image::ch01/gymclass-with-placeholder-modules.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/gymclass-with-placeholder-modules.png"]
+image::ch01/gymclass-with-person-module.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/gymclass-with-person-module.png"]
+
+
+
+
+
+Use of superclass vs subclass layouts.
+
 
 
 
