@@ -14,7 +14,7 @@ In this chapter we'll ...
 * nouns and verbs
 
 [[_basics_persons-name]]
-== ``Person``'s name [link:https://github.com/danhaywood/gymclass/tree/2.1-Person-first-name-and-last-name[2.1^]]
+== ``Person``'s name [link:https://github.com/danhaywood/gymclass/tree/_2.1-Person-first-name-and-last-name[_2.1^]]
 
 
 Let's start out by making `Person` a little bit more realistic.
@@ -276,7 +276,7 @@ Or, there are third-party options such as link:http://www.querydsl.com/[QueryDSL
 In this case study I'm going to stick with JDOQL.
 
 
-== Object identity (link:https://github.com/danhaywood/gymclass/tree/2.2-exception-recognizer-for-Person-duplicates[2.2^])
+== Object identity (link:https://github.com/danhaywood/gymclass/tree/_2.2-exception-recognizer-for-Person-duplicates[_2.2^])
 
 For every entity you'll need to think about its identity: how is it uniquely distinguished from other instances of the same type?
 
@@ -383,7 +383,7 @@ All that said, this is only a demo app, so I'm going to choose to ignore this im
 
 
 
-== Paraname8 addon (link:https://github.com/danhaywood/gymclass/tree/2.3-paraname8[2.3^])
+== Paraname8 addon (link:https://github.com/danhaywood/gymclass/tree/_2.3-paraname8[_2.3^])
 
 The Apache Isis framework tries to infer as much of the structure of the domain objects directly from Java code.
 For example, properties are inferred by the presence of getters returning a scalar, and collections are getters returning a collection.

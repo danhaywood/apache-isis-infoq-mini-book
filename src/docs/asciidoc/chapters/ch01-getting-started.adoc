@@ -99,7 +99,7 @@ If you're an link://http://netbeans.apache.org[Apache NetBeans^](TM) user then I
 
 
 [[_getting-started_using-the-maven-archetype-to-generate-the-app]]
-== Using the maven archetype to generate the app [link:https://github.com/danhaywood/gymclass/tree/1.1-as-generated-by-simpleapp-archetype[1.1^]]
+== Using the maven archetype to generate the app [link:https://github.com/danhaywood/gymclass/tree/_1.1-as-generated-by-simpleapp-archetype[_1.1^]]
 
 Apache Isis provides the link:http://isis.apache.org/guides/ugfun.html#_ugfun_getting-started_simpleapp-archetype["SimpleApp" Maven archetype^] to get you started.
 So that's what I'll use.
@@ -149,7 +149,7 @@ To pull down the code at this point, use:
 
 [source,bash]
 ----
-git checkout 1.1-as-generated-by-simpleapp-archetype
+git checkout _1.1-as-generated-by-simpleapp-archetype
 ----
 
 
@@ -406,7 +406,7 @@ Fun fact: the external examiner for Richard's thesis was link:https://en.wikiped
 
 
 
-== Refactor [link:https://github.com/danhaywood/gymclass/tree/1.2-simple-module-refactored-to-person-module[1.2^]]
+== Refactor [link:https://github.com/danhaywood/gymclass/tree/_1.2-simple-module-refactored-to-person-module[_1.2^]]
 
 As we surveyed xref:_getting-started_taking-a-look-around[above], the archetype gives us a single module called `simple`, with a single domain class called `SimpleObject`.
 As it happens, the structure of that entity is quite similar to the `Person` entity that we need in the `persons` module, so I decided to just do a little refactoring:
@@ -445,44 +445,10 @@ You can check this version of the app out using:
 
 [source,bash]
 ----
-git checkout 1.2-simple-module-refactored-to-person-module
+git checkout _1.2-simple-module-refactored-to-person-module
 ----
 
 
-[[_getting-started_placeholders]]
-== Placeholders for the other modules [link:https://github.com/danhaywood/gymclass/tree/1.3-adds-timetable-module[1.3^], link:https://github.com/danhaywood/gymclass/tree/1.4-adds-customer-module[1.4^], link:https://github.com/danhaywood/gymclass/tree/1.5-adds-employees-module[1.5^], link:https://github.com/danhaywood/gymclass/tree/1.6-adds-classes-module[1.6^]]
-
-Since we're going to need them eventually, I decided to create Maven modules for the other 4 modules (`customers`, `employees`, `timetable` and `classes`).
-I just took a copy of the `simple` module that comes with the "simpleapp" archetype, and then renamed its `SimpleObject` entity in each case to one of the entities in each of those modules.
-
-It's a judgement call as to when you would introduce modules for real application development.
-For maximum flexibility initialy you probably should start off with all your code in a single module, and just use Java packages to keep a bit of structure.
-
-Once the responsibilities of your classes start to settle down, and before you get too much code to work with, you do need to start formalizing things and introducing Maven modules.
-These will ensure that you have no bidirectional dependencies between the code.
-
-I've chosen to introduce modules right up front because my "gym class" case study is pretty simple, and I'm fairly certain that I have the boundaries about right.
-But if it was a more complex domain, I would definitely defer this decision.
-
-As it is, there are a succession of git tags, each of which adds in a placeholder module:
-
-* `1.3-adds-timetable-module` +
-+
-with a copy of `SimpleObject` renamed to `GymClassDescription` entity
-
-* `1.4-adds-customers-module` +
-+
-with a copy of `SimpleObject` renamed to `GymMember` entity
-
-* `1.5-adds-employees-module` +
-+
-with a copy of `SimpleObject` renamed to `GymInstructor` entity
-
-* `1.6-adds-classes-module` +
-+
-with a copy of `SimpleObject` renamed to `ScheduledGymClass` entity
-
-We'll flesh out these modules/entities in the subsequent sections and chapters.
 For the meantime, xref:_getting-started_placeholders_home-page[] shows the app as it currently stands.
 
 [#_getting-started_placeholders_home-page,reftext='{figure-caption} {counter:refnum}.']
