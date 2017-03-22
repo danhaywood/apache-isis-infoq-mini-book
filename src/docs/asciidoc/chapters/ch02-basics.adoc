@@ -312,6 +312,190 @@ Or, there are third-party options such as link:http://www.querydsl.com/[QueryDSL
 However, in this case study I'm going to stick with JDOQL.
 
 
+
+== Unit tests
+
+Domain objects in Apache Isis are just pojos, so they can be easily tested using unit tests.
+Here's
+
+[***TODO***]
+
+* nested static
+* naming (via mavenmixins, Test$Xxx)
+
+[source,java]
+----
+public class Person_Test {
+
+    Person person;
+
+    @Before
+    public void setUp() throws Exception {
+        person = new Person("Billy", "Mason");
+    }
+
+    public static class FirstName extends Person_Test {
+
+        @Test
+        public void happyCase() throws Exception {
+            // given
+            assertThat(person.getFirstName()).isEqualTo("Billy");
+            assertThat(person.getLastName()).isEqualTo("Mason");
+
+            // when
+            String name = "William";
+            person.setFirstName(name);
+
+            // then
+            assertThat(person.getFirstName()).isEqualTo(name);
+        }
+    }
+}
+----
+
+
+== Integration tests
+
+and fixtures...
+
+
+[***TODO***]
+
+* nested static
+* naming (via mavenmixins, IntegTest$Xxx)
+** can mix and match with unit tests
+* injected
+
+
+[source,java]
+----
+public static class UpdateName extends Person_IntegTest {
+
+    @Test
+    public void can_be_updated_directly() throws Exception {
+
+        // when
+        wrap(person).updateName("new first name", "new last name");
+        transactionService.nextTransaction();
+
+        // then
+        assertThat(wrap(person).getFirstName()).isEqualTo("new first name");
+        assertThat(wrap(person).getLastName()).isEqualTo("new last name");
+    }
+
+}
+----
+
+
+[source,java]
+----
+public class Person_IntegTest extends PersonsModuleIntegTestAbstract {
+
+    @Inject
+    FixtureScripts fixtureScripts;
+    @Inject
+    PersonRepository personRepository;
+    @Inject
+    TransactionService transactionService;
+
+    Person person;
+
+    @Before
+    public void setUp() throws Exception {
+        // given
+        fixtureScripts.runFixtureScript(new PersonsModuleTearDown(), null);
+        CreatePersons fs = new CreatePersons().setNumber(1);
+        fixtureScripts.runFixtureScript(fs, null);
+        transactionService.nextTransaction();
+
+        person = PersonData.FREDA_MCLINTOCK.findWith(personRepository);
+
+        assertThat(person).isNotNull();
+    }
+
+----
+
+The `PersonsModuleIntegTestAbstract` superclass does the bootstrapping.
+It's mostly boilerplate and pretty boring so we'll ignore this for now.
+Suffice to say it allows us to test the `persons` module by itself.
+
+
+
+[source,java]
+----
+@Accessors(chain = true)
+public class CreatePersons extends FixtureScript {
+
+    /**
+     * The number of objects to create, up to 10; optional, defaults to 3.
+     */
+    @Nullable
+    @Getter @Setter
+    private Integer number;
+
+    /**
+     * The objects created by this fixture (output).
+     */
+    @Getter
+    private final List<Person> people = Lists.newArrayList();
+
+    @Override
+    protected void execute(final ExecutionContext ec) {
+
+        int max = PersonData.values().length;
+
+        // defaults
+        final int number = defaultParam("number", ec, 3);
+
+        // validate
+        if(number < 0 || number > max) {
+            throw new IllegalArgumentException(String.format("number must be in range [0,%d)", max));
+        }
+
+        // execute
+        for (int i = 0; i < number; i++) {
+            final PersonData data = PersonData.values()[i];
+            final Person person =  data.createWith(wrap(personMenu));
+            ec.addResult(this, person);
+            people.add(person);
+        }
+    }
+
+    @javax.inject.Inject
+    PersonMenu personMenu;
+
+}
+
+----
+
+
+[source,java]
+----
+@AllArgsConstructor
+public enum PersonData {
+
+    FREDA_MCLINTOCK("Freda", "McLintock"),
+    BARRY_BLACK("Barry", "Black"),
+    SEBASTIAN_SMITH("Sebastian", "Smith"),
+    FIONA_BAGGINS("Fiona", "Baggins"),
+    HARRY_SLATER("Harry", "Slater");
+
+    private final String firstName;
+    private final String lastName;
+
+    public Person createWith(final PersonMenu menu) {
+        return menu.create(firstName, lastName);
+    }
+
+    public Person findWith(final PersonRepository personRepository) {
+        return personRepository.findByFirstNameAndLastName(firstName, lastName);
+    }
+}
+----
+
+
+
+
 == Object identity (link:https://github.com/danhaywood/gymclass/tree/_2.2-exception-recognizer-for-Person-duplicates[2.2^])
 
 For every entity you'll need to think about its identity: how is it uniquely distinguished from other instances of the same type?
