@@ -6,7 +6,7 @@
 
 
 
-=== Cut-down manifest
+== Cut-down manifest
 
 Bootstrapping an Apache Isis application requires an implementation of the `AppManifest` interface.
 
