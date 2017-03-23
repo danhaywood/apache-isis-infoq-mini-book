@@ -313,15 +313,16 @@ However, in this case study I'm going to stick with JDOQL.
 
 
 
+
+
 == Unit tests
 
-Domain objects in Apache Isis are just pojos, so they can be easily tested using unit tests.
-Here's
+The archetype sets up both unit tests and integration tests.
+A unit test exercises a single responsibility of an object, with all dependencies on that exercised code being mocked out or stubbed.
+Unit tests runs entirely in-memory.
 
-[***TODO***]
 
-* nested static
-* naming (via mavenmixins, Test$Xxx)
+Here's the unit test for `Person` as it currently stands:
 
 [source,java]
 ----
@@ -353,38 +354,32 @@ public class Person_Test {
 }
 ----
 
+The nested static classes provide a way of grouping a set of tests around a single responsibility.
+These inherit from the outer class and so inherit the `setUp()` method.
+In this particular case we are just exercising the "firstName" responsibility (ie property) of the `Person` class, and we're only looking at the happy case.
+
+One important point: the archetype configures the `pom.xml` runs unit tests and integration tests in separate executions (of the surefire plugin).
+This means that it needs to disinguish one from the other.
+It does so with a naming convention:
+
+* integration tests class name must include `IntegTest`
+* unit tests meanwhile must include `Test` and not `IntegTest`.
+
+This name can appear anywhere, so the fully qualified class name (such as `domainapp.modules.persons.dom.impl.Person_Test$FirstName`) matches.
+
+
 
 == Integration tests
 
-and fixtures...
+As well as unit tests, the archetype also sets up integration tests.
+These exercise all the layers of the application, simulating the user interface's interaction with the domain object model, and integrating the domain model with the backend database.
 
+For efficiency an in-memory database is used (HSQLDB).
 
-[***TODO***]
+For repeatability, the database schema is automatically created when the tests start.
+Each test is responsible for setting up its own data, using fixtures.
 
-* nested static
-* naming (via mavenmixins, IntegTest$Xxx)
-** can mix and match with unit tests
-* injected
-
-
-[source,java]
-----
-public static class UpdateName extends Person_IntegTest {
-
-    @Test
-    public void can_be_updated_directly() throws Exception {
-
-        // when
-        wrap(person).updateName("new first name", "new last name");
-        transactionService.nextTransaction();
-
-        // then
-        assertThat(wrap(person).getFirstName()).isEqualTo("new first name");
-        assertThat(wrap(person).getLastName()).isEqualTo("new last name");
-    }
-
-}
-----
+Let's look at our integration tests
 
 
 [source,java]
@@ -409,33 +404,53 @@ public class Person_IntegTest extends PersonsModuleIntegTestAbstract {
         transactionService.nextTransaction();
 
         person = PersonData.FREDA_MCLINTOCK.findWith(personRepository);
-
         assertThat(person).isNotNull();
     }
 
+    public static class UpdateName extends Person_IntegTest {   // <2>
+
+        @Test
+        public void can_be_updated_directly() throws Exception {
+            // when
+            wrap(person).updateName("new first name", "new last name");
+            transactionService.nextTransaction();
+
+            // then
+            assertThat(wrap(person).getFirstName()).isEqualTo("new first name");
+            assertThat(wrap(person).getLastName()).isEqualTo("new last name");
+        }
+    }
+}
 ----
 
-The `PersonsModuleIntegTestAbstract` superclass does the bootstrapping.
+As with the unit tests, the integration tests use the same nested static class idiom as a way of grouping together tests exercising a single responsibility -- the `updateName(...)` action in this case.
+
+The `setUp()` is responsible for setting up some data in the database.
+To do this, if uses the injected `FixtureScripts` service (provided by the framework) to invoke two `FixtureScript` implementations:
+
+* `PersonModuleTearDown` deletes data from all of the tables in the module
+* `CreatePersons` creates and persists a number of `Person` instances (in this case, just one, in fact)
+
+In the test itself, we invoke the `updateName(...)` action on a `Person` setup previously.
+In fact, that's a slight simplification: the test first calls `wrap(...)` on the `Person` object.
+This creates a type-safe proxy around the domain object, and it is this proxy that ensures that the business rules normally enforced by the UI viewer are also enforced within a test.
+We'll see some examples of business rules in the xref:business-logic.adoc#[next chapter].
+
+Finally the `PersonsModuleIntegTestAbstract` superclass does the bootstrapping.
 It's mostly boilerplate and pretty boring so we'll ignore this for now.
 Suffice to say it allows us to test the `persons` module by itself.
 
-
+Let's finish up here by looking at the `CreatePersons` fixture script:
 
 [source,java]
 ----
 @Accessors(chain = true)
 public class CreatePersons extends FixtureScript {
 
-    /**
-     * The number of objects to create, up to 10; optional, defaults to 3.
-     */
     @Nullable
     @Getter @Setter
     private Integer number;
 
-    /**
-     * The objects created by this fixture (output).
-     */
     @Getter
     private final List<Person> people = Lists.newArrayList();
 
@@ -463,11 +478,10 @@ public class CreatePersons extends FixtureScript {
 
     @javax.inject.Inject
     PersonMenu personMenu;
-
 }
-
 ----
 
+This in turn uses the `PersonData` enum:
 
 [source,java]
 ----
@@ -493,6 +507,23 @@ public enum PersonData {
 }
 ----
 
+The idea of `CreatePersons` is to be able to create a specified number of `Person` objects; it will default to creating 3 unless told otherwise.
+The maximum number it can create is 5 (the number of instances of `PersonData`).
+
+The `PersonData` enum meanwhile provides a type-safe way of looking up those instances; you can see the `findWith(...)` method called in the integration test.
+
+While there are, admittedly, quite a few classes here, it's easy to set up new person instances.
+Moreover these fixtures can be used while prototyping; we'll look at
+
+
+== Smoke tests
+
+NOTE: TODO
+
+
+Integration tests for the module...
+
+Smoke tests for the applcation as a whole
 
 
 

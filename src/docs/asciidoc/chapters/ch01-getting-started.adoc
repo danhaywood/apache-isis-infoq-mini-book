@@ -192,6 +192,7 @@ From there you are at the home page and you can create, find and update ``Simple
 image::ch01/simpleapp-object.png[pdfwidth="60%",link="https://raw.githubusercontent.com/danhaywood/apache-isis-infoq-mini-book/master/src/docs/asciidoc/images/ch01/simpleapp-object.png"]
 
 
+[[__getting-started_running-the-app_fixture-scripts]]
 === Fixture Scripts
 
 By default the application is configured to run against an in-memory database (HSQLDB).
@@ -219,6 +220,7 @@ This is probably a good point to import the application into your IDE; see the A
 It also shows how to run the application from the IDE (rather that from the Maven command line).
 ====
 
+[[__getting-started_taking-a-look-around_maven-modules]]
 === Maven Modules
 
 The application is a multi-module Maven build, consisting of several modules:
@@ -240,6 +242,8 @@ contains the `web.xml` file and related classes to package up the application as
 
 There is a top-level parent module for all of these modules.
 
+
+[[__getting-started_taking-a-look-around_the-SimpleObject-entity]]
 === The `SimpleObject` entity
 
 The `module-simple` module contains a single entity, `SimpleObject`.
@@ -330,6 +334,7 @@ JDO is admittedly less well known than JPA, but is just as capable (perhaps even
 In fact, DataNucleus implements both the JDO and link:https://en.wikipedia.org/wiki/Java_Persistence_API[JPA^] APIs (though at the time of writing Apache Isis only supports entities annotated with JDO).
 The `SimpleObject` class definition is also annotated with the framework's own `@DomainObject` annotation.
 
+[[__getting-started_taking-a-look-around_layout-metadata]]
 === Layout Metadata
 
 A good way to think about domain objects in Apache Isis are as regular pojos with additional metadata.
@@ -349,6 +354,7 @@ Alongside the title the app also renders an icon, as further hint as to the type
 The icon used also sits alongside the `SimpleObject`, namely `SimpleObject.png`.
 It can be quite good fun selecting an appropriate icon (I tend to use link:www.icons8.com[Icons8^].
 
+[[__getting-started_taking-a-look-around_domain-services]]
 === Domain services
 
 So much for the `SimpleObject` entity.
@@ -382,6 +388,7 @@ The supporting `@DomainServiceLayout` defines the label to use.
 Although the archetype defines `SimpleObjectMenu` and `SimpleObjectRepository` as being very similar, in a real-world app you may well want to organize your application menus completely differently to the way in which the repository services are defined.
 Having two services provides for this separation of concerns, letting them evolve independently of each other.
 
+[[__getting-started_taking-a-look-around_tests-and-fixtures]]
 === Tests and fixtures
 
 Finally, the archetype provides a whole bunch of tests and fixtures.
